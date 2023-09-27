@@ -1,3 +1,5 @@
+//This is a changed file
+
 #include <p_and_p.h>
 
 #include <stdio.h>
@@ -54,7 +56,6 @@ int loadCharacters(struct Character** ptr, size_t* numEls, int fd) {
   return 0;
 }
 
-int secureLoad(const char *filepath) {
   return 0;
   //find where to obtain ItemDetails pte and numEls variable in order to pass into playGame()
   //calls playGame()
