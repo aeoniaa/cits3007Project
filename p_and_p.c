@@ -6,23 +6,63 @@
 #include <string.h>
 #include <stdlib.h>
 
-//Look at week 9 lab, it has testing info??
-//Submit .c file, valid C11 code
-
+/**
+ * serializes an array of ItemDetails structs
+ * ItemDets.dat file format: 64-bit unsigned integer indicating number of ItemDetails structs to follow in the file 
+ * followed by multiple ItemDetails struct: itemID(64bit unsigned integer) + itemName(DEFAULT_BUFFER_SIZE 512) + itemDesc(DEFAULT_BUFFER_SIZE 512)
+ * \param arr
+ * \param numEls
+ * \param fd
+ * \return 1 if error, 0 otherwise
+*/
 int saveItemDetails(const struct ItemDetails* arr, size_t numEls, int fd) {
   return 0;
-  //writes struct data into the .dat files in the expected format
-  //take structs as input, produce file that matchs the 3.1 spec
-  //?required to update the metadata in the file in the save function after appending the structs?
-    // can write structs first, or meta data first.
-    // look at fseek and lseek functions.
-    // when writing a file the functions let you move forwards and backwards arounf the file so that you can write data at any position you like
+    //TODO: DOES THE FD NEED TO BE ZEROED OUT FIRST
+    FILE *fp;
+
+    //open file
+    fp = fdopen(fd, "w");
+    if( fp = NULL ) {
+      fclose(fp);
+      return 1;
+    }
+
+    //write numEls
+    size_t header_written = fwrite(numEls, sizeof(size_t), 1, fp);
+    if (header_written != numEls) {
+      fclose(fp);
+    return 1;
+    
+    //lseek or fseek to 64bits in. ie after the numEls
+    if (fseek(fp, sizeof(size_t), SEEK_SET) != 0){
+      fclose(fp);
+      return 1;
+    }
+
+    //write the structs
+    size_t els_written = fwrite(&arr, sizeof(struct ItemDetails), numEls, fp);
+    if (els_written != numEls) {
+      fclose(fp);
+    return 1;
+    }
+
+    //fflush()
+
+    fclose(fp);
+    return 0;
+  }
 }
 
 int saveItemDetailsToPath(const struct ItemDetails* arr, size_t numEls, const char* filename) {
   return 0;
   //the same as saveItemDetails but uses filename parameter.
   //not required to implement, but may be useful for testing
+    FILE *ofp = fopen(filename, "wb");
+
+  if (ofp == NULL) {
+    perror("Error opening file");
+    exit(EXIT_FAILURE);
+  }
 }
 
 int loadItemDetails(struct ItemDetails** ptr, size_t* numEls, int fd) {
