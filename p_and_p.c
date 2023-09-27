@@ -6,10 +6,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-//TODO: watch lecs for spec discussion
-//TODO: Look at week 9 lab, it has project info??
+//Look at week 9 lab, it has testing info??
 //Submit .c file, valid C11 code
-//In struct Character, I will put inventorySize before inventory. (It could be left as is without impacting the code significantly. But it will make your life slightly easier if I put inventorySize first, plus it's better practice and a more logical order.)
 
 int saveItemDetails(const struct ItemDetails* arr, size_t numEls, int fd) {
   return 0;
