@@ -15,26 +15,26 @@
  * \param fd
  * \return 1 if error, 0 otherwise
 */
-int saveItemDetails(const struct ItemDetails* arr, size_t numEls, int fd) {
-  return 0;
+int saveItemDetails(const struct ItemDetails* arr, size_t numEls, int fd){
     //TODO: DOES THE FD NEED TO BE ZEROED OUT FIRST
     FILE *fp;
 
     //open file
     fp = fdopen(fd, "w");
-    if( fp = NULL ) {
+    if( fp == NULL ) {
       fclose(fp);
       return 1;
     }
 
-    //write numEls
-    size_t header_written = fwrite(numEls, sizeof(size_t), 1, fp);
-    if (header_written != numEls) {
+    //write numEls to file
+    uint64_t u64 = numEls;
+    if(fwrite(&u64, sizeof(u64), 1, fp) != 1){
       fclose(fp);
-    return 1;
+      return 1;
+    }
     
     //lseek or fseek to 64bits in. ie after the numEls
-    if (fseek(fp, sizeof(size_t), SEEK_SET) != 0){
+    if (fseek(fp, sizeof(u64), SEEK_SET) != 0){
       fclose(fp);
       return 1;
     }
