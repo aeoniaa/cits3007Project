@@ -47,11 +47,12 @@ int saveItemDetails(const struct ItemDetails* arr, size_t numEls, int fd){
     }
 
     //fflush()
+    
 
     fclose(fp);
     return 0;
   }
-}
+
 
 int saveItemDetailsToPath(const struct ItemDetails* arr, size_t numEls, const char* filename) {
   return 0;
@@ -102,3 +103,4 @@ int secureLoad(const char *filepath) {
 
 void playGame(struct ItemDetails* ptr, size_t numEls);
 
+int main(int argc, char *argv[]){printf("hello world\n");}
