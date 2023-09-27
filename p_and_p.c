@@ -21,16 +21,18 @@ int saveItemDetails(const struct ItemDetails* arr, size_t numEls, int fd){
 
     //open file
     fp = fdopen(fd, "w");
-    if( fp == NULL ) {
+    if (fp == NULL) {
       fclose(fp);
       return 1;
     }
 
     //write numEls to file
     uint64_t u64 = numEls;
-    if(fwrite(&u64, sizeof(u64), 1, fp) != 1){
+    
+    size_t header_written = fwrite(&u64, sizeof(u64), 1, fp);
+    if (header_written != 1) {
       fclose(fp);
-      return 1;
+    return 1;
     }
     
     //lseek or fseek to 64bits in. ie after the numEls
