@@ -23,6 +23,7 @@
  * \param fd
  * \return 1 if error, 0 otherwise
 */
+//FIXME: DOES NOT PASS MOODLE TESTS
 int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
     //ItemDetails Struct --> uint64_t is 8, the buffers are 512,  total 1032bytes
     FILE *fp;
@@ -119,19 +120,13 @@ int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
  * Must be max length DEFAULT_BUFFER_SIZE.
  * @return 1 if valid, 0 otherwise
 */
+//FIXME: THIS FUNCTION PASSES MOODLE TESTS!!
 int isValidName(const char *str) {
-  //CHECK REQUIREMENTS empty string is valid as doesn't contain any non graphical characters
-  //isgraph(); and only graph
-  //no whitespace or control characters
-  //length = DEFAULT_BUFFER_SIZE
-  //DEFAULT_BUFFER_SIZE-1 content, +1 nul terminator
-  //undefined after first nul byte
-
+  
   if (str == NULL){
     return 0;
   }
 
-  //strnlen returns num bytes excluding terminating \0
   size_t len = strnlen(str, DEFAULT_BUFFER_SIZE); 
 
   if (len >= DEFAULT_BUFFER_SIZE) {
@@ -151,18 +146,12 @@ int isValidName(const char *str) {
  * @brief Checks if string is a valid multi-word field
  * @return 1 if valid, 0 otherwise
 */
+//FIXME: this function passes moodle tests
 int isValidMultiword(const char *str) {
-  //CHECK REQUIREMENTS empty string is valid
-  //isgraph() + space characters
-  //first and last characts must not be space
-  //length = DEFAULT_BUFFER_SIZE
-  //DEFAULT_BUFFER_SIZE-1 content, +1 nul terminator
-  //undefined after first nul byte
   if (str == NULL){
     return 0;
   }
 
-  //strnlen returns num bytes excluding terminating \0
   size_t len = strnlen(str, DEFAULT_BUFFER_SIZE); 
 
   if (len >= DEFAULT_BUFFER_SIZE) {
@@ -186,23 +175,17 @@ int isValidMultiword(const char *str) {
  * @brief Checks if an ItemDetails struct is valid
  * @return 1 if valid, 0 otherwise
 */
+//FIXME: THE FUNCTION PASSES MOODLE TESTS
 int isValidItemDetails(const struct ItemDetails *id) {
-  //uint64_t itemID
-  //name = NUL-terminated string of length at most DEFAULT_BUFFER_SIZE-1 (name field)
-  //desc = NUL-terminated string of length at most DEFAULT_BUFFER_SIZE-1 (multi-word field)
-  
-  //name = name field
-  //desc = multi-word field
-  //no empty strings
   if (id == NULL) {
     return 0;
   }
 
-  if (!isValidName(id->name)) {
+  if (!isValidName(id->name) || id->name[0] == '\0') {
     return 0;
   }
 
-  if (!isValidMultiword(id->desc)) {
+  if (!isValidMultiword(id->desc) || id->desc[0] == '\0') {
     return 0;
   }
 
@@ -217,22 +200,8 @@ int isValidItemDetails(const struct ItemDetails *id) {
  * @brief Checks if a Character struct is valid
  * @return 1 if valid, 0 otherwise
 */
+//FIXME: THE FUNCTION PASSES MOODLE TESTS
 int isValidCharacter(const struct Character * c) {
-  //uint64_t characterID; 
-  //enum CharacterSocialClass socialClass; //enum CharacterSocialClass {   MENDICANT,   LABOURER,   MERCHANT,   GENTRY,   ARISTOCRACY };
-  //char profession[DEFAULT_BUFFER_SIZE]; -->NUL-terminated string of length at most DEFAULT_BUFFER_SIZE-1. is name field, must not be empty string
-  //char name[DEFAULT_BUFFER_SIZE]; --> NUL-terminated string of length at most DEFAULT_BUFFER_SIZE-1. is multi-word field, must not be empty string
-  //size_t inventorySize; 64-bit unsigned integer indicating num of items carried by character
-  //struct ItemCarried inventory[MAX_ITEMS];
-      //what is ItemCarried --> //struct ItemCarried {   uint64_t itemID;   size_t quantity; };
-      //itemID = 64bit unsigned int
-      //quantity = 64bit unsigned int
-      //sum of all 'quantity' fields in the character's *inventory* must not exceed MAX_ITEMS.
-      //inventorySize is less than or equal to MAX_ITEMS
-  //check number of array elements currently containing valid ItemCarried records is stored in the 'inventorySize' field
-  
-  //Although the inventory field of each Character struct always contains MAX_ITEMS elements, only the used portion of the inventory (that is, inventorySize many elements) is written to (or read from) a character file.
-  
   if (c == NULL) {
     return 0;
   }
