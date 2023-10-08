@@ -15,7 +15,7 @@
  * followed by multiple ItemDetails struct: itemID(64bit unsigned integer) + itemName(DEFAULT_BUFFER_SIZE 512) + itemDesc(DEFAULT_BUFFER_SIZE 512)
  * //TODO: pre-conditions
  * \param arr
- * \param numEls
+ * \param nmemb
  * \param fd
  * \return 1 if error, 0 otherwise
 */
@@ -30,7 +30,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
       return 1;
     }
 
-    //write numEls to file
+    //write nmemb to file
     uint64_t u64 = nmemb;
     
     size_t header_written = fwrite(&u64, sizeof(u64), 1, fp);
@@ -39,7 +39,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
     return 1;
     }
     
-    //lseek or fseek to 64bits in. ie after the numEls
+    //lseek or fseek to 64bits in. ie after the nmemb
     if (fseek(fp, sizeof(u64), SEEK_SET) != 0){
       fclose(fp);
       return 1;
@@ -124,8 +124,8 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
 
 int secureLoad(const char *filepath) {
   return 0;
-  //find where to obtain ItemDetails pte and numEls variable in order to pass into playGame()
-    //setuid: secure coding cookbook, labs
+  //find where to obtain ItemDetails pte and nmemb variable in order to pass into playGame()
+  //setuid: secure coding cookbook, labs
   //calls playGame()
 }
 
