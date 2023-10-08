@@ -74,13 +74,13 @@ struct Character {
   struct ItemCarried inventory[MAX_ITEMS];
 };
 
-int saveItemDetails(const struct ItemDetails* arr, size_t numEls, int fd);
+int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd);
 
-int saveItemDetailsToPath(const struct ItemDetails* arr, size_t numEls, const char* filename);
+int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const char* filename);
 
-int loadItemDetails(struct ItemDetails** ptr, size_t* numEls, int fd);
+int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd);
 
-int loadItemDetailsFromPath(struct ItemDetails** ptr, size_t* numEls, const char* filename);
+int loadItemDetailsFromPath(struct ItemDetails** ptr, size_t* nmemb, const char* filename);
 
 int isValidName(const char * str);
 
@@ -90,13 +90,13 @@ int isValidItemDetails(const struct ItemDetails *id);
 
 int isValidCharacter(const struct Character *c);
 
-int saveCharacters(struct Character *arr, size_t numEls, int fd);
+int saveCharacters(struct Character *arr, size_t nmemb, int fd);
 
-int loadCharacters(struct Character** ptr, size_t* numEls, int fd);
+int loadCharacters(struct Character** ptr, size_t* nmemb, int fd);
 
 int secureLoad(const char *filepath);
 
-void playGame(struct ItemDetails* ptr, size_t numEls);
+void playGame(struct ItemDetails* ptr, size_t nmemb);
 
 #endif
 // P_AND_P_H
