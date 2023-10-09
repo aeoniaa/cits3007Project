@@ -46,13 +46,12 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
     }
     
     //lseek or fseek to 64bits in. ie after the nmemb
-    //TODO: change sizeof() to 64bits
     if (fseek(fp, sizeof(u64), SEEK_SET) != 0){
       fclose(fp);
       return 1;
     }
 
-    //TODO: memset() STRUCT NEED TO BE ZEROED OUT FIRST -> if itemdetails doesnt have exact known things (ie, theres no pointers)
+    //TODO: IS THIS REQUIRED?? memset() STRUCT NEED TO BE ZEROED OUT FIRST -> if itemdetails doesnt have exact known things (ie, theres no pointers)
     //write the structs
     size_t els_written = fwrite(&arr, sizeof(struct ItemDetails), nmemb, fp);
     if (els_written != nmemb) {
