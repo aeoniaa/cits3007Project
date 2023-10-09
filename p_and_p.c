@@ -27,6 +27,7 @@
  * serializes an array of ItemDetails structs
  * ItemDets.dat file format: 64-bit unsigned integer indicating number of ItemDetails structs to follow in the file 
  * followed by multiple ItemDetails struct: itemID(64bit unsigned integer) + itemName(DEFAULT_BUFFER_SIZE 512) + itemDesc(DEFAULT_BUFFER_SIZE 512)
+ * validates each ItemDetails struct attempted to be written is valid. If not, stop, close file and return 1 (error)
  * //TODO: pre-conditions
  * \param arr
  * \param nmemb
@@ -45,10 +46,10 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   //FIXME: delete before submitting  
   for (size_t i = 0; i < nmemb; i++) {
     int res = isValidItemDetails(&arr[i]);
-    printf("Item details %s is valid\n", arr[i].name);
+    //printf("Item details %s is valid\n", arr[i].name);
     if (res != 1) {
       fclose(fp);
-      printf("Error: invlaid item details detected");
+      //printf("Error: invlaid item details detected");
       return 1;
     }
   //   printf("Item %zu:\n", i + 1);
