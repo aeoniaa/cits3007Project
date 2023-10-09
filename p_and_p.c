@@ -54,7 +54,6 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   //--> add struct afterwards
 
   //write nmemb to file
-  size_t numStructs = nmemb;
   printf("nmemb: %ld\n", nmemb);
   
   for (size_t i = 0; i < nmemb; i++) {
@@ -65,7 +64,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   }
   printf("after items printed\n");
 
-  size_t header_written = fwrite(&numStructs, sizeof(numStructs), 1, fp);
+  size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
   if (header_written != 1) {
     fclose(fp);
   return 1;
@@ -73,7 +72,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   printf("after header_written\n");
   
   //lseek or fseek to 64bits in. ie after the nmemb
-  if (fseek(fp, sizeof(numStructs), SEEK_SET) != 0){
+  if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
     fclose(fp);
     printf("a\n");
     return 1;
@@ -82,14 +81,14 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
 
   //write the structs, returns num of elements written
   //TODO: IS THIS NECCESSARY: malloc memory size of file? memset(to NULL?), write in structs?
-  size_t els_written = fwrite(&arr, sizeof(struct ItemDetails), nmemb, fp);
-  printf("els_written: %ld", els_written);
+  int els_written = 0;
+  els_written = fwrite(&arr, sizeof(struct ItemDetails), nmemb, fp);
+  printf("els_written: %d", els_written);
   if (els_written != nmemb) {
     fclose(fp);
     printf("Failed to write to file");
   return 1;
   }
-
 
   printf("after written to file\n");
 
