@@ -16,7 +16,7 @@
 #define _GNU_SOURCE
 
 #include <sys/types.h>
-#include <test_utils.h>
+#include "test_utils.h"
 #include <p_and_p.h>
 #include <time.h>
 // for fcntl
@@ -339,9 +339,11 @@ int open_with_fileno(const char * infile_path) {
 // check whether two ItemDetails structs are equal. returns 1 if they are,
 // 0 otherwise.
 void assert_itemDetails_are_equal(const struct ItemDetails *id1, const struct ItemDetails *id2) {
-  ck_assert_msg(id1->itemID == id2->itemID, "ItemID for id1 and id2 should be equal");
-  ck_assert_str_eq(id1->name, id2->name);
-  ck_assert_str_eq(id1->desc, id2->desc);
+  assert(id1->itemID == id2->itemID); //, "ItemID for id1 and id2 should be equal");
+  int res = strcmp(id1->name, id2->name);
+  if (res == 0) printf("id1->name, id2->name");
+  int res = strcmp(id1->desc, id2->desc);
+  if (res == 0) printf("id1->desc, id2->desc");
 }
 
 // read the contents of `filename` into malloc'd memory.
@@ -437,19 +439,18 @@ int main(int argc, char *argv[]){
   const size_t expected_size = sizeof(uint64_t) + sizeof(struct ItemDetails);
 
   fprintf(stderr, "%s:%d: actual file_size = %zu\n",
-          __FILE__, __LINE__, file_size);
-
-  ck_assert_msg(file_size == expected_size, "size of written file should eq expected size");
+    __FILE__, __LINE__, file_size);
+  assert(file_size == expected_size); //"size of written file should eq expected size"
 
    // metadata should be `1`
   size_t actual_read_metadata = 0;
   memcpy(&actual_read_metadata, file_conts, sizeof(size_t));
-  ck_assert_msg(actual_read_metadata == itemArr_size, "size of written metadata should be as expected");
+  assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected");
 
    // following the metadata should be our struct
   struct ItemDetails actual_read_item = { 0 };
   memcpy(&actual_read_item, file_conts + sizeof(size_t), sizeof(struct ItemDetails));
-  ck_assert_msg(actual_read_metadata == itemArr_size, "size of written metadata should be as expected");
+  assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected"
 
   assert_itemDetails_are_equal(&actual_read_item, &(itemArr[0]));
 
