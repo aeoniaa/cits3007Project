@@ -331,4 +331,21 @@ int main(int argc, char *argv[]){
 
   printf("res of loadItemDetails: %d\n", res);
   printf("numItems (modified by loadItemDetails() ): %ld\n", numItems);
+
+  struct ItemDetails itemArr[] = {
+    { .itemID = 16602759796824695000UL, .name = "telescope",      .desc = "brass with wooden tripod, 25x30x60 in." }
+  };
+  size_t itemArr_size = sizeof(itemArr)/sizeof(struct ItemDetails);
+
+  char* file_conts = NULL;
+  size_t file_size = 0;
+
+  FILE *ofp = fopen("tmp.dat", "wb");
+  assert(ofp != NULL);
+  int fd = fileno(ofp);
+  assert(fd != -1);
+  int res = saveItemDetails(itemArr, itemArr_size, fd);
+  assert(res == 0);
+  fclose(ofp);
+
   }
