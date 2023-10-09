@@ -82,7 +82,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   printf("1\n");
     //write the structs, returns num of elements written
     //TODO: IS THIS NECCESSARY: malloc memory size of file? memset(to NULL?), write in structs?
-    size_t els_written = fwrite(arr, sizeof(struct ItemDetails), nmemb, fp);
+    size_t els_written = fwrite(&arr, sizeof(struct ItemDetails), 1, fp);
     if (els_written != nmemb) {
       fclose(fp);
       print("Failed to write to file")
