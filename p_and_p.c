@@ -36,10 +36,14 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
       return 1;
     }
 
+    //NUMBER TO ADD TO HEADER IS NUMBER OF STRUCTS
+    //--> write as header
+    //--> add struct afterwards
+
     //write nmemb to file
     //TODO: what is nmemb???? numItems is its original name
-    uint64_t u64 = nmemb;
-    printf("AAAAAAAAAAAAAAAAAAAAA nmemb: %ld", u64);
+    size_t u64 = nmemb;
+    printf("nmemb: %ld\n", u64);
     
     size_t header_written = fwrite(&u64, sizeof(u64), 1, fp);
     if (header_written != 1) {
