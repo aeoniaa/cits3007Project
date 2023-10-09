@@ -324,6 +324,7 @@ int main(int argc, char *argv[]){
   int fd = open_with_fileno(infile_path);
   printf("opened file\n");
 
+
   size_t numItems = 0;
   struct ItemDetails * itemsArr = NULL;
   int res = loadItemDetails(&itemsArr, &numItems, fd);

@@ -165,50 +165,50 @@ struct NameAndValidity isValidName_test_data[] = {
 //// implementation to test:
 /////////////////////////////////////////////////////////
 //
-//#tcase saveItemDetails_testcase
-//
-//#test saveItemDetails_works
-//
-//    struct ItemDetails itemArr[] = {
-//      { .itemID = 16602759796824695000UL, .name = "telescope",      .desc = "brass with wooden tripod, 25x30x60 in." }
-//    };
-//    size_t itemArr_size = sizeof(itemArr)/sizeof(struct ItemDetails);
-//
-//    char* file_conts = NULL;
-//    size_t file_size = 0;
-//
-//    FILE *ofp = fopen("tmp.dat", "wb");
-//    assert(ofp != NULL);
-//    int fd = fileno(ofp);
-//    assert(fd != -1);
-//    int res = saveItemDetails(itemArr, itemArr_size, fd);
-//    assert(res == 0);
-//    fclose(ofp);
-//
-//    res = slurp_file("tmp.dat", "rb", &file_conts, &file_size);
-//    assert(res == 0);
-//
-//    const size_t expected_size = sizeof(uint64_t) + sizeof(struct ItemDetails);
-//
-//    fprintf(stderr, "%s:%d: actual file_size = %zu\n",
-//            __FILE__, __LINE__, file_size);
-//
-//    ck_assert_msg(file_size == expected_size, "size of written file should eq expected size");
-//
-//    // metadata should be `1`
-//    size_t actual_read_metadata = 0;
-//    memcpy(&actual_read_metadata, file_conts, sizeof(size_t));
-//    ck_assert_msg(actual_read_metadata == itemArr_size, "size of written metadata should be as expected");
-//
-//    // following the metadata should be our struct
-//    struct ItemDetails actual_read_item = { 0 };
-//    memcpy(&actual_read_item, file_conts + sizeof(size_t), sizeof(struct ItemDetails));
-//    ck_assert_msg(actual_read_metadata == itemArr_size, "size of written metadata should be as expected");
-//
-//    assert_itemDetails_are_equal(&actual_read_item, &(itemArr[0]));
-//
-//    if (file_conts != NULL)
-//      free(file_conts);
+#tcase saveItemDetails_testcase
+
+#test saveItemDetails_works
+
+   struct ItemDetails itemArr[] = {
+     { .itemID = 16602759796824695000UL, .name = "telescope",      .desc = "brass with wooden tripod, 25x30x60 in." }
+   };
+   size_t itemArr_size = sizeof(itemArr)/sizeof(struct ItemDetails);
+
+   char* file_conts = NULL;
+   size_t file_size = 0;
+
+   FILE *ofp = fopen("tmp.dat", "wb");
+   assert(ofp != NULL);
+   int fd = fileno(ofp);
+   assert(fd != -1);
+   int res = saveItemDetails(itemArr, itemArr_size, fd);
+   assert(res == 0);
+   fclose(ofp);
+
+   res = slurp_file("tmp.dat", "rb", &file_conts, &file_size);
+   assert(res == 0);
+
+   const size_t expected_size = sizeof(uint64_t) + sizeof(struct ItemDetails);
+
+   fprintf(stderr, "%s:%d: actual file_size = %zu\n",
+           __FILE__, __LINE__, file_size);
+
+   ck_assert_msg(file_size == expected_size, "size of written file should eq expected size");
+
+   // metadata should be `1`
+   size_t actual_read_metadata = 0;
+   memcpy(&actual_read_metadata, file_conts, sizeof(size_t));
+   ck_assert_msg(actual_read_metadata == itemArr_size, "size of written metadata should be as expected");
+
+   // following the metadata should be our struct
+   struct ItemDetails actual_read_item = { 0 };
+   memcpy(&actual_read_item, file_conts + sizeof(size_t), sizeof(struct ItemDetails));
+   ck_assert_msg(actual_read_metadata == itemArr_size, "size of written metadata should be as expected");
+
+   assert_itemDetails_are_equal(&actual_read_item, &(itemArr[0]));
+
+   if (file_conts != NULL)
+     free(file_conts);
 
 
 // vim: syntax=c :
