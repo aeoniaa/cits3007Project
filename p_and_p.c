@@ -72,7 +72,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
     fclose(fp);
   return 1;
   }
-  printf("after header_written = %d\n", header_written);
+  printf("after header_written = %ld\n", header_written);
   
   //lseek or fseek to 64bits in. ie after the nmemb
   if (fseek(fp, sizeof(numStructs), SEEK_SET) != 0){
@@ -85,10 +85,10 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   //write the structs, returns num of elements written
   //TODO: IS THIS NECCESSARY: malloc memory size of file? memset(to NULL?), write in structs?
   size_t els_written = fwrite(&arr, sizeof(struct ItemDetails), nmemb, fp);
-  printf("els_written: %ld" els_written);
+  printf("els_written: %ld", els_written);
   if (els_written != nmemb) {
     fclose(fp);
-    print("Failed to write to file")
+    printf("Failed to write to file");
   return 1;
   }
   printf("after written to file\n");
