@@ -337,6 +337,8 @@ int main(int argc, char *argv[]){
   // printf("numItems (modified by loadItemDetails() ): %ld\n", numItems);
 
 
+
+//SAVE ITEM DETAILS CHECKS
   struct ItemDetails itemArr[] = {
     { .itemID = 16602759796824695000UL, .name = "telescope",      .desc = "brass with wooden tripod, 25x30x60 in." }
   };
@@ -350,8 +352,32 @@ int main(int argc, char *argv[]){
   int saveItemfd = fileno(ofp);
   assert(saveItemfd != -1);
 
-  int resSaveItem = saveItemDetails(itemArr, itemArr_size, saveItemfd);
-  assert(resSaveItem == 0);
+  int res = saveItemDetails(itemArr, itemArr_size, saveItemfd);
+  assert(res == 0);
   fclose(ofp);
+
+  const size_t expected_size = sizeof(uint64_t) + sizeof(struct ItemDetails);
+
+  fprintf(stderr, "%s:%d: actual file_size = %zu\n",
+          __FILE__, __LINE__, file_size);
+
+  ck_assert_msg(file_size == expected_size, "size of written file should eq expected size");
+
+   // metadata should be `1`
+  size_t actual_read_metadata = 0;
+  memcpy(&actual_read_metadata, file_conts, sizeof(size_t));
+  ck_assert_msg(actual_read_metadata == itemArr_size, "size of written metadata should be as expected");
+
+   // following the metadata should be our struct
+  struct ItemDetails actual_read_item = { 0 };
+  memcpy(&actual_read_item, file_conts + sizeof(size_t), sizeof(struct ItemDetails));
+  ck_assert_msg(actual_read_metadata == itemArr_size, "size of written metadata should be as expected");
+
+  assert_itemDetails_are_equal(&actual_read_item, &(itemArr[0]));
+
+  if (file_conts != NULL)
+    free(file_conts);
+
+
 
   }
