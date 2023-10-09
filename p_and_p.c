@@ -44,7 +44,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
 
   //FIXME: delete before submitting  
   for (size_t i = 0; i < nmemb; i++) {
-    int res = isValidItemDetails(arr[i])
+    int res = isValidItemDetails(arr[i]);
     printf("Item details %lu is valid\n", arr[i].name);
     if (res != 1) {
       fclose(fp);
