@@ -43,12 +43,19 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   }
 
   //FIXME: delete before submitting  
-  // for (size_t i = 0; i < nmemb; i++) {
+  for (size_t i = 0; i < nmemb; i++) {
+    int res = isValidItemDetails(arr[i])
+    printf("Item details %lu is valid\n", arr[i].name);
+    if (header_written != 1) {
+      fclose(fp);
+      printf("Error: invlaid item details detected");
+      return 1;
+    }
   //   printf("Item %zu:\n", i + 1);
   //   printf("\tItem ID: %lu\n", arr[i].itemID);
   //   printf("\tName: %s\n", arr[i].name);
   //   printf("\tDescription: %s\n", arr[i].desc);
-  // }
+  }
 
   size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
   if (header_written != 1) {
@@ -129,7 +136,6 @@ int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
  * Must be max length DEFAULT_BUFFER_SIZE.
  * @return 1 if valid, 0 otherwise
 */
-//FIXME: THIS FUNCTION PASSES MOODLE TESTS!!
 int isValidName(const char *str) {
   
   if (str == NULL){
@@ -155,7 +161,6 @@ int isValidName(const char *str) {
  * @brief Checks if string is a valid multi-word field
  * @return 1 if valid, 0 otherwise
 */
-//FIXME: this function passes moodle tests
 int isValidMultiword(const char *str) {
   if (str == NULL){
     return 0;
@@ -184,7 +189,6 @@ int isValidMultiword(const char *str) {
  * @brief Checks if an ItemDetails struct is valid
  * @return 1 if valid, 0 otherwise
 */
-//FIXME: THE FUNCTION PASSES MOODLE TESTS
 int isValidItemDetails(const struct ItemDetails *id) {
   if (id == NULL) {
     return 0;
@@ -209,7 +213,6 @@ int isValidItemDetails(const struct ItemDetails *id) {
  * @brief Checks if a Character struct is valid
  * @return 1 if valid, 0 otherwise
 */
-//FIXME: THE FUNCTION PASSES MOODLE TESTS
 int isValidCharacter(const struct Character * c) {
   if (c == NULL) {
     return 0;
@@ -419,8 +422,7 @@ int main(int argc, char *argv[]){
 
   const size_t expected_size = sizeof(uint64_t) + sizeof(struct ItemDetails);
 
-  fprintf(stderr, "%s:%d: actual file_size = %zu\n",
-    __FILE__, __LINE__, file_size);
+  //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
   assert(file_size == expected_size); //"size of written file should eq expected size"
 
    // metadata should be `1`
