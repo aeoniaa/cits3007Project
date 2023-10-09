@@ -78,6 +78,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
       printf("\tDescription: %s\n", arr[i].desc);
   }
 
+  printf("1\n");
     //write the structs, returns num of elements written
     //TODO: IS THIS NECCESSARY: malloc memory size of file? memset(to NULL?), write in structs?
     size_t els_written = fwrite(&arr, sizeof(struct ItemDetails), nmemb, fp);
@@ -85,10 +86,13 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
       fclose(fp);
     return 1;
     }
+    printf("2\n");
 
     //fflush() --> check if contains buffered input or output yet to be fully read or written
     fflush(fp);
+    printf("3\n");
     fclose(fp);
+    printf("4\n");
     return 0;
 
     //TODO: incorporate validation functions into this function where applicable. return an error if encounter an invalid struct or file record.
@@ -349,8 +353,7 @@ void assert_itemDetails_are_equal(const struct ItemDetails *id1, const struct It
 // read the contents of `filename` into malloc'd memory.
 // the caller should free `*file_conts`.
 int slurp_file(
-  const char * filename, const char *mode, char **file_conts, size_t *file_size
-) {
+  const char * filename, const char *mode, char **file_conts, size_t *file_size) {
     FILE *file = fopen(filename, mode);
     if (file == NULL) {
         perror("Error opening file");
