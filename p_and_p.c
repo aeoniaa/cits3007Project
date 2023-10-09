@@ -72,7 +72,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
     fclose(fp);
   return 1;
   }
-  printf("after header_written = %ld\n");
+  printf("after header_written\n");
   
   //lseek or fseek to 64bits in. ie after the nmemb
   if (fseek(fp, sizeof(numStructs), SEEK_SET) != 0){
