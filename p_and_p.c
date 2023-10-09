@@ -1,4 +1,4 @@
-//This is a changed file
+//AHHHH
 //TODO: check when reading a buffer no use of strcpy or strlen as they read past the buffer size DEFAULT_BUFFER_SIZE-1
 //could use <read> func from <unistd.h> to read struct from file using fd ssize_tread(intfd, void*buf, size_tcount); -->   structMyStructmyStruct; ssize_tres = read(fd, &myStruct, sizeof(structMyStruct));
 //fp to fd --> fdopen and fileno
@@ -58,7 +58,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
       printf("Name: %s\n", arr[i].name);
       printf("Description: %s\n", arr[i].desc);
   }
-  
+
     //write the structs, returns num of elements written
     //TODO: IS THIS NECCESSARY: malloc memory size of file? memset(to NULL?), write in structs?
     size_t els_written = fwrite(&arr, sizeof(struct ItemDetails), nmemb, fp);
