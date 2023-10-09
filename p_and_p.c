@@ -342,7 +342,7 @@ void assert_itemDetails_are_equal(const struct ItemDetails *id1, const struct It
   assert(id1->itemID == id2->itemID); //, "ItemID for id1 and id2 should be equal");
   int res = strcmp(id1->name, id2->name);
   if (res == 0) printf("id1->name, id2->name");
-  int res = strcmp(id1->desc, id2->desc);
+  res = strcmp(id1->desc, id2->desc);
   if (res == 0) printf("id1->desc, id2->desc");
 }
 
