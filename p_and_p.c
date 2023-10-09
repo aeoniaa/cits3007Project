@@ -80,8 +80,6 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   fflush(fp);
   fclose(fp);
   return 0;
-
-    //TODO: incorporate validation functions into this function where applicable. return an error if encounter an invalid struct or file record.
   }
 
 
@@ -109,26 +107,51 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
  * @return 1 if error occurs. No memory will be allocated. On success, return 0.
 */
 int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
-  return 0;
     //read header for number of items to load --> write num or records to nmemb
-    //allocate memory for amount of items --> pointer = ptr
+    //allocate memory for amount of items
     //write records to that memory
     //ptr = pointer to that memory 
-    //nmemb = number of items loaded
+    //nmemb = number of itemDetail structs to be loaded
 
-    //fread to read info from a struct
+    //fread() to read info from a struct
 
     //file header: Number of items: a 64-bit unsigned integer indicating the number of ItemDetails structs that follow in the file.
     //ItemDetails: 64bit int ID + 512byte Name buffer + 512byte Desc buffer
 
-
-    // file open
-    //do work
     // //TODO: fflush()
     //fclose(fp);
 
-    //TODO: incorporate validation functions into this function where applicable. return an error if encounter an invalid struct or file record.
+    
     //return 1 if error occurs. No memory should be allocated (allocated memory freed)
+
+
+    // Read the number of records (nmemb) from the file header
+    if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
+        perror("Failed to read the header");
+        return 1;
+    }
+
+    // Allocate memory for the records
+    *ptr = (struct ItemDetails*)malloc(sizeof(struct ItemDetails) * (*nmemb));
+
+    if (*ptr == NULL) {
+        perror("Memory allocation failed");
+        return 1;
+    }
+
+    //TODO: possibly need to fseek here to 64bits in.
+    // Read the records from the file and store them in the allocated memory
+    if (read(fd, *ptr, sizeof(struct ItemDetails) * (*nmemb)) != sizeof(struct ItemDetails) * (*nmemb)) {
+        perror("Failed to read item details");
+        free(*ptr); // Free the allocated memory in case of an error
+        return 1;
+    }
+
+    //fflush(fd); // no called correctly
+    //close(fd); //""
+    return 0; // Success
+    //TODO: incorporate validation functions into this function where applicable. return an error if encounter an invalid struct or file record.
+
 }
 
 /**
@@ -255,7 +278,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     //TODO: fwrite characters struct
     //TODO: STRUCT NEED TO BE ZEROED OUT FIRST then add in the name. Find a function that takes a value and copies it through the whole array
     
-    //Header = 64-bit unsigned int indicating number of CHaracter structs stored in the file, and total number of character to be loaded
+    //Header = 64-bit unsigned int indicating number of Character structs stored in the file, and total number of character to be loaded
     //characterId = A 64-bit, unsigned integer value representing the unique identifier of the character.
     //socialClass: An 8-bit, unsigned integer representing the character’s social class. Each value (from 0 to 4) specifies one of the enumerated members of the CharacterSocialClass enum.
     //profession: A block of characters of length DEFAULT_BUFFER_SIZE, containing the character’s profession. This is a name field.
@@ -271,19 +294,81 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     //do work
     // //TODO: fflush()
     //fclose(fp);
+
+    FILE *fp;
+
+    // Open the file for writing
+    fp = fdopen(fd, "w");
+    if (fp == NULL) {
+        fclose(fp);
+        return 1;
+    }
+
+    // Validate each character in the array
+    for (size_t i = 0; i < nmemb; i++) {
+        int res = isValidCharacter(&arr[i]);
+        if (res != 1) {
+            fclose(fp);
+            return 1;
+        }
+    }
+
+    // Write the number of characters to file as a header
+    size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
+    if (header_written != 1) {
+        fclose(fp);
+        return 1;
+    }
+
+    // Seek to the position after the header
+    if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0) {
+        fclose(fp);
+        return 1;
+    }
+
+    // Write the array of characters to the file
+    size_t els_written = fwrite(arr, sizeof(struct Character), nmemb, fp);
+    if (els_written != nmemb) {
+        fclose(fp);
+        return 1;
+        }
+
+    // fflush() and close the file
+    fflush(fp);
+    fclose(fp);
+
     return 0;
-    //TODO: validate using isValidCharacter()
 }
+//TODO: validation
 
 //SHOULD BEHAVE AS ITEM DETAILS DOES
 int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
-    //Size of the Character array: A 64-bit, unsigned integer value indicating the number of Character structs stored in the file. This is the total number of characters to be loaded.
+    //Size of the Character array: A 64-bit, unsigned integer value indicating the number of Character structs stored in the file. This is the total number of characters to be loaded.    
 
-     // file open
-    //do work
+    // Read the number of characters (nmemb) from the file header
+    if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
+        perror("Failed to read the header");
+        return 1;
+    }
+
+    // Allocate memory for the characters
+    *ptr = (struct Character*)malloc(sizeof(struct Character) * (*nmemb));
+
+    if (*ptr == NULL) {
+        perror("Memory allocation failed");
+        return 1;
+    }
+
+    // Read the characters from the file and store them in the allocated memory
+    if (read(fd, *ptr, sizeof(struct Character) * (*nmemb)) != sizeof(struct Character) * (*nmemb)) {
+        perror("Failed to read character details");
+        free(*ptr); // Free the allocated memory in case of an error
+        return 1;
+    }
+
+    return 0; // Success
     // //TODO: fflush()
     //fclose(fp);
-    return 0;
 }
 
 int secureLoad(const char *filepath) {
@@ -386,6 +471,7 @@ int slurp_file(
 int main(int argc, char *argv[]){
   printf("hello world\n");
 
+//from check.ts loadItemDetails
   // const char * infile_path = "test-data/items001.dat";
   // int item001fd = open_with_fileno(infile_path);
   // printf("opened file\n");
@@ -397,6 +483,31 @@ int main(int argc, char *argv[]){
 
   // printf("res of loadItemDetails: %d\n", res);
   // printf("numItems (modified by loadItemDetails() ): %ld\n", numItems);
+
+  
+//from chatgpt loadItemDetails
+    // // Sample usage of loadItemDetails
+    // int fd = open("your_file.dat", O_RDONLY); // Open the file for reading
+    // if (fd == -1) {
+    //     perror("Failed to open the file");
+    //     return 1;
+    // }
+
+    // struct ItemDetails* loadedItems = NULL;
+    // size_t numItems = 0;
+
+    // if (loadItemDetails(&loadedItems, &numItems, fd) != 0) {
+    //     fprintf(stderr, "Error: Failed to load item details\n");
+    //     return 1;
+    // }
+
+    // // Now you have the loadedItems array with numItems elements
+
+    // // Remember to free the allocated memory when you're done with it
+    // free(loadedItems);
+
+    // return 0;
+
 
 
 
@@ -440,5 +551,23 @@ int main(int argc, char *argv[]){
 
   if (file_conts != NULL)
     free(file_conts);
+
+
+  //SAVECHARACTER
+  // // Sample data
+  //   struct Character arr[] = {
+  //       {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
+  //       {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
+  //       // Add more characters as needed
+  //   };
+
+  //   size_t nmemb = sizeof(arr) / sizeof(arr[0]);
+
+  //   // Call saveCharacters with the array pointer
+  //   if (saveCharacters(arr, nmemb, fileno(stdout)) != 0) {
+  //       fprintf(stderr, "Error: Failed to save characters\n");
+  //       return 1;
+  //   }
+
 
   }
