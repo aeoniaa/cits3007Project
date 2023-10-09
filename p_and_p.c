@@ -5,7 +5,7 @@
 //fp to fd --> fdopen and fileno
 #define _POSIX_C_SOURCE 200809L
 
-#include <p_and_p.h>
+#include "p_and_p.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -13,6 +13,18 @@
 #include <stdint.h>
 #include <assert.h>
 #include <check.h>
+#define _GNU_SOURCE
+
+#include <sys/types.h>
+#include "test_utils.h"
+#include <p_and_p.h>
+#include <time.h>
+// for fcntl
+#include <unistd.h>
+#include <fcntl.h>
+// for memfd_create
+#include <sys/mman.h>
+
 
 
 /**
