@@ -1,4 +1,5 @@
 //AHHHH
+//TODO: remove prints before submitting
 //TODO: check when reading a buffer no use of strcpy or strlen as they read past the buffer size DEFAULT_BUFFER_SIZE-1
 //could use <read> func from <unistd.h> to read struct from file using fd ssize_tread(intfd, void*buf, size_tcount); -->   structMyStructmyStruct; ssize_tres = read(fd, &myStruct, sizeof(structMyStruct));
 //fp to fd --> fdopen and fileno
@@ -51,7 +52,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
       return 1;
     }
 
-  //TODO: remove
+  //TODO: remove before submitting
   for (size_t i = 0; i < nmemb; i++) {
       printf("Item %zu:\n", i + 1);
       printf("Item ID: %lu\n", arr[i].itemID);
@@ -301,5 +302,29 @@ int secureLoad(const char *filepath) {
 
 void playGame(struct ItemDetails* ptr, size_t nmemb);
 
+int open_with_fileno(const char * infile_path) {
+  FILE *ifp = fopen(infile_path, "rb");
+  if (ifp == NULL)
+    die_perror(__FILE__, __LINE__, "couldn't open file");
+  
+
+  int fd = fileno(ifp);
+
+  if (fd == -1)
+    die_perror(__FILE__, __LINE__, "couldn't get fd for file");
+
+  return fd;
+}
 //TODO: REMOVE BEFORE SUBMITTING
-int main(int argc, char *argv[]){printf("hello world\n");}
+int main(int argc, char *argv[]){
+  printf("hello world\n");
+
+  const char * infile_path = "test-data/items001.dat";
+  int fd = open_with_fileno(infile_path);
+
+  size_t numItems = 0;
+  struct ItemDetails * itemsArr = NULL;
+  int res = loadItemDetails(&itemsArr, &numItems, fd);
+
+
+  }
