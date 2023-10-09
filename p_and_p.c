@@ -320,6 +320,8 @@ int secureLoad(const char *filepath) {
 
 void playGame(struct ItemDetails* ptr, size_t nmemb);
 
+//TODO: DELETE THESE FUNCTIONS: THEY WERE FOR CHECKING
+
 int open_with_fileno(const char * infile_path) {
   FILE *ifp = fopen(infile_path, "rb");
   if (ifp == NULL)
@@ -341,6 +343,57 @@ void assert_itemDetails_are_equal(const struct ItemDetails *id1, const struct It
   ck_assert_str_eq(id1->name, id2->name);
   ck_assert_str_eq(id1->desc, id2->desc);
 }
+
+// read the contents of `filename` into malloc'd memory.
+// the caller should free `*file_conts`.
+int slurp_file(
+  const char * filename, const char *mode, char **file_conts, size_t *file_size
+) {
+    FILE *file = fopen(filename, mode);
+    if (file == NULL) {
+        perror("Error opening file");
+        return 1;
+    }
+
+    fseek(file, 0, SEEK_END);
+    long file_sizel = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    if (file_sizel == -1) {
+        perror("Error getting file size");
+        fclose(file);
+        return 1;
+    }
+
+    *file_size = (size_t) file_sizel;
+
+    // memory for contents
+    assert(file_conts != NULL);
+    *file_conts = malloc( (size_t) file_sizel);
+
+    char * file_conts_ = *file_conts;
+
+    if (file_conts_ == NULL) {
+        perror("Error allocating memory");
+        fclose(file);
+        return 1;
+    }
+
+    // Read the file contents into the array
+    size_t bytes_read = fread(file_conts_, 1, (size_t) file_sizel, file);
+
+    if (bytes_read != (size_t) file_sizel) {
+        perror("Error reading file");
+        free(file_conts_);
+        fclose(file);
+        return 1;
+    }
+
+    fclose(file);
+
+    return 0;
+}
+
 
 //TODO: REMOVE BEFORE SUBMITTING
 int main(int argc, char *argv[]){
