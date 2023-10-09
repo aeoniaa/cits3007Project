@@ -306,13 +306,13 @@ void playGame(struct ItemDetails* ptr, size_t nmemb);
 int open_with_fileno(const char * infile_path) {
   FILE *ifp = fopen(infile_path, "rb");
   if (ifp == NULL)
-    perror(__FILE__, __LINE__, "couldn't open file");
+    printf(__FILE__, __LINE__, "couldn't open file");
   
 
   int fd = fileno(ifp);
 
   if (fd == -1)
-    perror(__FILE__, __LINE__, "couldn't get fd for file");
+    printf(__FILE__, __LINE__, "couldn't get fd for file");
 
   return fd;
 }
