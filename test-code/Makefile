@@ -36,8 +36,8 @@ p_and_p.o:
 
 all: p_and_p.o
 
-p_and_p: p_and_p.o
-	$(CC) -o $@ $^ $(LDFLAGS)
+#p_and_p: p_and_p.o
+#	$(CC) -o $@ $^ $(LDFLAGS)
 
 
 # Requires that `doxygen` and `dot` are on your PATH.
