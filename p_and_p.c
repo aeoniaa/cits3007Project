@@ -59,12 +59,12 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   printf("nmemb: %ld\n", nmemb);
   
   //TODO: remove before submitting
-  for (size_t i = 0; i < nmemb; i++) {
-    printf("Item %zu:\n", i + 1);
-    printf("\tItem ID: %lu\n", arr[i].itemID);
-    printf("\tName: %s\n", arr[i].name);
-    printf("\tDescription: %s\n", arr[i].desc);
-  }
+  // for (size_t i = 0; i < nmemb; i++) {
+  //   printf("Item %zu:\n", i + 1);
+  //   printf("\tItem ID: %lu\n", arr[i].itemID);
+  //   printf("\tName: %s\n", arr[i].name);
+  //   printf("\tDescription: %s\n", arr[i].desc);
+  // }
   printf("after items printed\n");
 
   size_t header_written = fwrite(&numStructs, sizeof(numStructs), 1, fp);
