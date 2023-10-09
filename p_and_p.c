@@ -42,17 +42,17 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
 
     //write nmemb to file
     //TODO: what is nmemb???? numItems is its original name
-    size_t u64 = nmemb;
-    printf("nmemb: %ld\n", u64);
+    size_t numStructs = nmemb;
+    printf("nmemb: %ld\n\n", nmemb);
     
-    size_t header_written = fwrite(&u64, sizeof(u64), 1, fp);
+    size_t header_written = fwrite(&numStructs, sizeof(numStructs), 1, fp);
     if (header_written != 1) {
       fclose(fp);
     return 1;
     }
     
     //lseek or fseek to 64bits in. ie after the nmemb
-    if (fseek(fp, sizeof(u64), SEEK_SET) != 0){
+    if (fseek(fp, sizeof(numStructs), SEEK_SET) != 0){
       fclose(fp);
       return 1;
     }
@@ -60,9 +60,9 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   //TODO: remove before submitting
   for (size_t i = 0; i < nmemb; i++) {
       printf("Item %zu:\n", i + 1);
-      printf("Item ID: %lu\n", arr[i].itemID);
-      printf("Name: %s\n", arr[i].name);
-      printf("Description: %s\n", arr[i].desc);
+      printf("\tItem ID: %lu\n", arr[i].itemID);
+      printf("\tName: %s\n", arr[i].name);
+      printf("\tDescription: %s\n", arr[i].desc);
   }
 
     //write the structs, returns num of elements written
@@ -324,19 +324,17 @@ int open_with_fileno(const char * infile_path) {
 int main(int argc, char *argv[]){
   printf("hello world\n");
 
-  const char * infile_path = "test-data/items001.dat";
-  int item001fd = open_with_fileno(infile_path);
-  printf("opened file\n");
+  // const char * infile_path = "test-data/items001.dat";
+  // int item001fd = open_with_fileno(infile_path);
+  // printf("opened file\n");
 
 
-  size_t numItems = 0;
-  struct ItemDetails * itemsArr = NULL;
-  int res = loadItemDetails(&itemsArr, &numItems, item001fd);
+  // size_t numItems = 0;
+  // struct ItemDetails * itemsArr = NULL;
+  // int res = loadItemDetails(&itemsArr, &numItems, item001fd);
 
-  printf("res of loadItemDetails: %d\n", res);
-  printf("numItems (modified by loadItemDetails() ): %ld\n", numItems);
-
-
+  // printf("res of loadItemDetails: %d\n", res);
+  // printf("numItems (modified by loadItemDetails() ): %ld\n", numItems);
 
 
   struct ItemDetails itemArr[] = {
@@ -351,6 +349,7 @@ int main(int argc, char *argv[]){
   assert(ofp != NULL);
   int saveItemfd = fileno(ofp);
   assert(saveItemfd != -1);
+
   int resSaveItem = saveItemDetails(itemArr, itemArr_size, saveItemfd);
   assert(resSaveItem == 0);
   fclose(ofp);
