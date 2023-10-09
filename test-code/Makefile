@@ -23,7 +23,7 @@ check_ld_flags 	:= $(shell pkg-config --libs check)
 # suggest adding ",leak"
 safety_features = \
 	-fno-omit-frame-pointer \
-	-fsanitize=address,undefined \
+	-fsanitize=address,undefined,leak \
 	-fstack-protector-strong
 
 SHELL 	= bash
