@@ -63,104 +63,104 @@ int open_with_fileno(const char * infile_path) {
 //    // we expect the strlen-calculated size
 //    // to be greater than 0.
 //    ck_assert_uint_gt(len, 0);
+//
+#tcase loadItemDetails_items001_works_testcase
 
-//#tcase loadItemDetails_items001_works_testcase
-//
-//    struct ItemDetails items001_expectedItems[] = {
-//      { .itemID = 16602759796824695000UL, .name = "telescope",      .desc = "brass with wooden tripod, 25x30x60 in." },
-//      { .itemID = 13744653742375254000UL, .name = "rope",           .desc = "hemp, 50 ft." },
-//      { .itemID = 3400701144194139000UL,  .name = "music-box",      .desc = "brass gears with tin-plated case, 6 in., cursed" },
-//      { .itemID = 734628920708863200UL,   .name = "billiard-ball",  .desc = "ivory, 2 in., set of 16 in wooden case, of mysterious origin" },
-//      { .itemID = 14734865628490349000UL, .name = "sword-cane",     .desc = "steel-bladed, concealed in Malacca-wood walking-cane, 36 in." },
-//      { .itemID = 14324391740292973000UL, .name = "dynamite-stick", .desc = "with paper wrapping, 1 in. diameter x 12 in." },
-//      { .itemID = 7562791295545618000UL,  .name = "Epsom-salts",    .desc = "6 oz, in glass bottle with cork stopper" },
-//      { .itemID = 13658877949582529000UL, .name = "camp-stool",     .desc = "canvas and wood, 12 in. seat height" },
-//      { .itemID = 2390949174291477500UL,  .name = "slide-rule",     .desc = "wood and brass, 12 in., cursed" },
-//    };
-//
-//    size_t items001_expectedSize = sizeof(items001_expectedItems)/sizeof(struct ItemDetails);
-//
-//
-//#test loadItemDetails_items001_size_is_correct
-//
-//    const char * infile_path = "test-data/items001.dat";
-//    int fd = open_with_fileno(infile_path);
-//
-//    size_t numItems = 0;
-//    struct ItemDetails * itemsArr = NULL;
-//    int res = loadItemDetails(&itemsArr, &numItems, fd);
-//
-//    if (res != 0)
-//      die_perror(__FILE__, __LINE__, "loadItems failed");
-//
-//    // check we got the expected number of items
-//    ck_assert_msg(numItems == items001_expectedSize, "numItems should equal items001_expectedSize");
-//
-//    free(itemsArr);
-//
-//static_assert( sizeof(items001_expectedItems)/sizeof(struct ItemDetails) == 9 ,
-//               "expect correct number of file 001 items" );
-//
-//// test each item is correct, from idx 0 through to 8
-//// loop index is available as `_i`
-//
-//#test-loop (0,9) loadItemDetails_items001_items_are_equal
-//
-//    const char * infile_path = "test-data/items001.dat";
-//    int fd = open_with_fileno(infile_path);
-//
-//    size_t numItems = 0;
-//    struct ItemDetails * itemsArr = NULL;
-//    int res = loadItemDetails(&itemsArr, &numItems, fd);
-//
-//    if (res != 0)
-//      die_perror(__FILE__, __LINE__, "loadItems failed");
-//
-//    // pre-requisite: we got the expected number of items
-//    assert(numItems == items001_expectedSize);
-//
-//    fprintf(stderr, "checking equality of item %d, with expected itemID %zu\n",
-//            _i, items001_expectedItems[_i].itemID
-//    );
-//    assert_itemDetails_are_equal(itemsArr + _i, &(items001_expectedItems[_i]));
-//
-//    free(itemsArr);
-//
-//// ///////////////////////////////////////////////////////
-//// // Uncomment the following if you have a isValidName()
-//// // implementation to test:
-//// ///////////////////////////////////////////////////////
-////
-//#tcase isValidName_testcase
-//
-//// datatypes and data used for this testcase
-//
-//struct NameAndValidity {
-//  char name[DEFAULT_BUFFER_SIZE];
-//  int validity;
-//};
-//
-//struct NameAndValidity isValidName_test_data[] = {
-//  { .name = "a b", .validity = 0 },
-//  { .name = "a-b", .validity = 1 },
-//  { .name = "a'b", .validity = 1 }
-//};
-//
-//#test isValidName_simple_case
-//    const char *name = "bob";
-//    int expected_result = 1;
-//    int actual_result = isValidName(name);
-//    ck_assert_int_eq(actual_result, expected_result);
-//
-//#test-loop (0,3) isValidName_more_cases
-//
-//    struct NameAndValidity nv = isValidName_test_data[_i];
-//    const char *name = nv.name;
-//    int expected_result = nv.validity;
-//    int actual_result = isValidName(name);
-//    ck_assert_int_eq(actual_result, expected_result);
-//
-/////////////////////////////////////////////////////////
+    struct ItemDetails items001_expectedItems[] = {
+      { .itemID = 16602759796824695000UL, .name = "telescope",      .desc = "brass with wooden tripod, 25x30x60 in." },
+      { .itemID = 13744653742375254000UL, .name = "rope",           .desc = "hemp, 50 ft." },
+      { .itemID = 3400701144194139000UL,  .name = "music-box",      .desc = "brass gears with tin-plated case, 6 in., cursed" },
+      { .itemID = 734628920708863200UL,   .name = "billiard-ball",  .desc = "ivory, 2 in., set of 16 in wooden case, of mysterious origin" },
+      { .itemID = 14734865628490349000UL, .name = "sword-cane",     .desc = "steel-bladed, concealed in Malacca-wood walking-cane, 36 in." },
+      { .itemID = 14324391740292973000UL, .name = "dynamite-stick", .desc = "with paper wrapping, 1 in. diameter x 12 in." },
+      { .itemID = 7562791295545618000UL,  .name = "Epsom-salts",    .desc = "6 oz, in glass bottle with cork stopper" },
+      { .itemID = 13658877949582529000UL, .name = "camp-stool",     .desc = "canvas and wood, 12 in. seat height" },
+      { .itemID = 2390949174291477500UL,  .name = "slide-rule",     .desc = "wood and brass, 12 in., cursed" },
+    };
+
+    size_t items001_expectedSize = sizeof(items001_expectedItems)/sizeof(struct ItemDetails);
+
+
+#test loadItemDetails_items001_size_is_correct
+
+    const char * infile_path = "test-data/items001.dat";
+    int fd = open_with_fileno(infile_path);
+
+    size_t numItems = 0;
+    struct ItemDetails * itemsArr = NULL;
+    int res = loadItemDetails(&itemsArr, &numItems, fd);
+
+    if (res != 0)
+      die_perror(__FILE__, __LINE__, "loadItems failed");
+
+    // check we got the expected number of items
+    ck_assert_msg(numItems == items001_expectedSize, "numItems should equal items001_expectedSize");
+
+    free(itemsArr);
+
+static_assert( sizeof(items001_expectedItems)/sizeof(struct ItemDetails) == 9 ,
+               "expect correct number of file 001 items" );
+
+// test each item is correct, from idx 0 through to 8
+// loop index is available as `_i`
+
+#test-loop (0,9) loadItemDetails_items001_items_are_equal
+
+    const char * infile_path = "test-data/items001.dat";
+    int fd = open_with_fileno(infile_path);
+
+    size_t numItems = 0;
+    struct ItemDetails * itemsArr = NULL;
+    int res = loadItemDetails(&itemsArr, &numItems, fd);
+
+    if (res != 0)
+      die_perror(__FILE__, __LINE__, "loadItems failed");
+
+    // pre-requisite: we got the expected number of items
+    assert(numItems == items001_expectedSize);
+
+    fprintf(stderr, "checking equality of item %d, with expected itemID %zu\n",
+            _i, items001_expectedItems[_i].itemID
+    );
+    assert_itemDetails_are_equal(itemsArr + _i, &(items001_expectedItems[_i]));
+
+    free(itemsArr);
+
+// ///////////////////////////////////////////////////////
+// // Uncomment the following if you have a isValidName()
+// // implementation to test:
+// ///////////////////////////////////////////////////////
+
+#tcase isValidName_testcase
+
+// datatypes and data used for this testcase
+
+struct NameAndValidity {
+  char name[DEFAULT_BUFFER_SIZE];
+  int validity;
+};
+
+struct NameAndValidity isValidName_test_data[] = {
+  { .name = "a b", .validity = 0 },
+  { .name = "a-b", .validity = 1 },
+  { .name = "a'b", .validity = 1 }
+};
+
+#test isValidName_simple_case
+    const char *name = "bob";
+    int expected_result = 1;
+    int actual_result = isValidName(name);
+    ck_assert_int_eq(actual_result, expected_result);
+
+#test-loop (0,3) isValidName_more_cases
+
+    struct NameAndValidity nv = isValidName_test_data[_i];
+    const char *name = nv.name;
+    int expected_result = nv.validity;
+    int actual_result = isValidName(name);
+    ck_assert_int_eq(actual_result, expected_result);
+
+///////////////////////////////////////////////////////
 //// Uncomment the following if you have a saveItemDetails()
 //// implementation to test:
 /////////////////////////////////////////////////////////
