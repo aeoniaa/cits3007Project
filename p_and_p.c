@@ -12,6 +12,7 @@
 #include <ctype.h>
 #include <stdint.h>
 #include <assert.h>
+#include <check.h>
 
 
 /**
@@ -320,6 +321,15 @@ int open_with_fileno(const char * infile_path) {
 
   return fd;
 }
+
+// check whether two ItemDetails structs are equal. returns 1 if they are,
+// 0 otherwise.
+void assert_itemDetails_are_equal(const struct ItemDetails *id1, const struct ItemDetails *id2) {
+  ck_assert_msg(id1->itemID == id2->itemID, "ItemID for id1 and id2 should be equal");
+  ck_assert_str_eq(id1->name, id2->name);
+  ck_assert_str_eq(id1->desc, id2->desc);
+}
+
 //TODO: REMOVE BEFORE SUBMITTING
 int main(int argc, char *argv[]){
   printf("hello world\n");
@@ -356,6 +366,9 @@ int main(int argc, char *argv[]){
   assert(res == 0);
   fclose(ofp);
 
+  res = slurp_file("tmp.dat", "rb", &file_conts, &file_size);
+  assert(res == 0);
+
   const size_t expected_size = sizeof(uint64_t) + sizeof(struct ItemDetails);
 
   fprintf(stderr, "%s:%d: actual file_size = %zu\n",
@@ -377,7 +390,5 @@ int main(int argc, char *argv[]){
 
   if (file_conts != NULL)
     free(file_conts);
-
-
 
   }
