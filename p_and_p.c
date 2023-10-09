@@ -59,12 +59,12 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   printf("nmemb: %ld\n", nmemb);
   
   //TODO: remove before submitting
-  // for (size_t i = 0; i < nmemb; i++) {
-  //   printf("Item %zu:\n", i + 1);
-  //   printf("\tItem ID: %lu\n", arr[i].itemID);
-  //   printf("\tName: %s\n", arr[i].name);
-  //   printf("\tDescription: %s\n", arr[i].desc);
-  // }
+  for (size_t i = 0; i < nmemb; i++) {
+    printf("Item %zu:\n", i + 1);
+    printf("\tItem ID: %lu\n", arr[i].itemID);
+    printf("\tName: %s\n", arr[i].name);
+    printf("\tDescription: %s\n", arr[i].desc);
+  }
   printf("after items printed\n");
 
   size_t header_written = fwrite(&numStructs, sizeof(numStructs), 1, fp);
@@ -72,7 +72,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
     fclose(fp);
   return 1;
   }
-  printf("after header_written = %ld\n", header_written);
+  printf("after header_written = %ld\n");
   
   //lseek or fseek to 64bits in. ie after the nmemb
   if (fseek(fp, sizeof(numStructs), SEEK_SET) != 0){
@@ -84,13 +84,16 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
 
   //write the structs, returns num of elements written
   //TODO: IS THIS NECCESSARY: malloc memory size of file? memset(to NULL?), write in structs?
-  size_t els_written = fwrite(&arr, sizeof(struct ItemDetails), nmemb, fp);
+  size_t els_written = fwrite(&arr, DEFAULT_BUFFER_SIZE+DEFAULT_BUFFER_SIZE+sizeof(uint64_t), nmemb, fp);
+  //size_t els_written = fwrite(&arr, sizeof(struct ItemDetails), nmemb, fp);
   printf("els_written: %ld", els_written);
   if (els_written != nmemb) {
     fclose(fp);
     printf("Failed to write to file");
   return 1;
   }
+
+
   printf("after written to file\n");
 
   //fflush() --> check if contains buffered input or output yet to be fully read or written
