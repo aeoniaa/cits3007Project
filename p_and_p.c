@@ -328,6 +328,6 @@ int main(int argc, char *argv[]){
   struct ItemDetails * itemsArr = NULL;
   int res = loadItemDetails(&itemsArr, &numItems, fd);
 
-  printf("numItems: %d\n", numItems);
-  printf("itemsArr: %p\n", itemsArr);
+  printf("res of loadItemDetails: %d\n", res);
+  printf("numItems (modified by loadItemDetails() ): %ld\n", numItems);
   }
