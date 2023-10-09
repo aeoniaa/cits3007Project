@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "p_and_p.h": "c"
+        "p_and_p.h": "c",
+        "test_utils.h": "c",
+        "ctype.h": "c",
+        "assert.h": "c"
     }
 }

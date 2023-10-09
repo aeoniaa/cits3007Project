@@ -1,29 +1,25 @@
-//AHHHH
 //TODO: remove prints before submitting
-//TODO: check when reading a buffer no use of strcpy or strlen as they read past the buffer size DEFAULT_BUFFER_SIZE-1
+//TODO: no use of strcpy or strlen as they read past the buffer size DEFAULT_BUFFER_SIZE-1
 //could use <read> func from <unistd.h> to read struct from file using fd ssize_tread(intfd, void*buf, size_tcount); -->   structMyStructmyStruct; ssize_tres = read(fd, &myStruct, sizeof(structMyStruct));
 //fp to fd --> fdopen and fileno
 #define _POSIX_C_SOURCE 200809L
+#define _GNU_SOURCE
 
+#include "test_utils.h"
 #include <p_and_p.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <stdint.h>
-#include <assert.h>
-#include <check.h>
-#define _GNU_SOURCE
-
+#include <ctype.h>
 #include <sys/types.h>
-#include "test_utils.h"
-#include <p_and_p.h>
-#include <time.h>
-// for fcntl
 #include <unistd.h>
 #include <fcntl.h>
-// for memfd_create
+#include <time.h>
 #include <sys/mman.h>
+#include <assert.h>
+#include <check.h>
 
 
 
@@ -37,66 +33,44 @@
  * \param fd
  * \return 1 if error, 0 otherwise
 */
-//FIXME: DOES NOT PASS MOODLE TESTS
 int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
-  //ItemDetails Struct --> uint64_t is 8, the buffers are 512,  total 1032bytes
   FILE *fp;
 
-  //open file
   fp = fdopen(fd, "w");
   if (fp == NULL) {
     fclose(fp);
     return 1;
   }
 
-  //NUMBER TO ADD TO HEADER IS NUMBER OF STRUCTS
-  //--> write as header
-  //--> add struct afterwards
-
-  //write nmemb to file
-  printf("nmemb: %ld\n", nmemb);
-  
-  for (size_t i = 0; i < nmemb; i++) {
-    printf("Item %zu:\n", i + 1);
-    printf("\tItem ID: %lu\n", arr[i].itemID);
-    printf("\tName: %s\n", arr[i].name);
-    printf("\tDescription: %s\n", arr[i].desc);
-  }
-  printf("after items printed\n");
+  //FIXME: delete before submitting  
+  // for (size_t i = 0; i < nmemb; i++) {
+  //   printf("Item %zu:\n", i + 1);
+  //   printf("\tItem ID: %lu\n", arr[i].itemID);
+  //   printf("\tName: %s\n", arr[i].name);
+  //   printf("\tDescription: %s\n", arr[i].desc);
+  // }
 
   size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
   if (header_written != 1) {
     fclose(fp);
   return 1;
   }
-  printf("after header_written\n");
   
-  //lseek or fseek to 64bits in. ie after the nmemb
   if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
     fclose(fp);
     printf("a\n");
     return 1;
   }
-  printf("after fseek\n");
 
-  //write the structs, returns num of elements written
-  //TODO: IS THIS NECCESSARY: malloc memory size of file? memset(to NULL?), write in structs?
   size_t els_written = 0;
   els_written = fwrite(arr, sizeof(struct ItemDetails), nmemb, fp);
-  printf("els_written: %ld", els_written);
   if (els_written != nmemb) {
     fclose(fp);
-    printf("Failed to write to file");
   return 1;
   }
 
-  printf("after written to file\n");
-
-  //fflush() --> check if contains buffered input or output yet to be fully read or written
   fflush(fp);
-  printf("3\n");
   fclose(fp);
-  printf("4\n");
   return 0;
 
     //TODO: incorporate validation functions into this function where applicable. return an error if encounter an invalid struct or file record.
