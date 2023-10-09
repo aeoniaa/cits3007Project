@@ -23,7 +23,7 @@ check_ld_flags 	:= $(shell pkg-config --libs check)
 # suggest adding ",leak"
 safety_features = \
 	-fno-omit-frame-pointer \
-	-fsanitize=address,undefined \
+	-fsanitize=address,undefined,leak \
 	-fstack-protector-strong
 
 SHELL 	= bash
@@ -35,6 +35,10 @@ LDFLAGS = $(check_ld_flags) $(safety_features)
 p_and_p.o:
 
 all: p_and_p.o
+
+p_and_p: p_and_p.o
+	$(CC) -o $@ $^ $(LDFLAGS)
+
 
 # Requires that `doxygen` and `dot` are on your PATH.
 # Intall with `sudo apt-get doxygen graphviz` if not.

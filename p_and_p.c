@@ -5,7 +5,6 @@
 #define _POSIX_C_SOURCE 200809L
 
 #include <p_and_p.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -38,7 +37,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
     //write nmemb to file
     //TODO: what is nmemb???? numItems is its original name
     uint64_t u64 = nmemb;
-    printf("AAAAAAAAAAAAAAAAAAAAA nmemb: %d", u64);
+    printf("AAAAAAAAAAAAAAAAAAAAA nmemb: %ld", u64);
     
     size_t header_written = fwrite(&u64, sizeof(u64), 1, fp);
     if (header_written != 1) {
@@ -52,12 +51,14 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
       return 1;
     }
 
+  //TODO: remove
   for (size_t i = 0; i < nmemb; i++) {
       printf("Item %zu:\n", i + 1);
       printf("Item ID: %lu\n", arr[i].itemID);
       printf("Name: %s\n", arr[i].name);
       printf("Description: %s\n", arr[i].desc);
-
+  }
+  
     //write the structs, returns num of elements written
     //TODO: IS THIS NECCESSARY: malloc memory size of file? memset(to NULL?), write in structs?
     size_t els_written = fwrite(&arr, sizeof(struct ItemDetails), nmemb, fp);
