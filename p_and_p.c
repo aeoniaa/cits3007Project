@@ -56,13 +56,15 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   //write nmemb to file
   //TODO: what is nmemb???? numItems is its original name
   size_t numStructs = nmemb;
-  printf("nmemb: %ld\n\n", nmemb);
+  printf("nmemb: %ld\n", nmemb);
   
+
   size_t header_written = fwrite(&numStructs, sizeof(numStructs), 1, fp);
   if (header_written != 1) {
     fclose(fp);
   return 1;
   }
+  printf("after header_written = %d\n", header_written);
   
   //lseek or fseek to 64bits in. ie after the nmemb
   if (fseek(fp, sizeof(numStructs), SEEK_SET) != 0){
