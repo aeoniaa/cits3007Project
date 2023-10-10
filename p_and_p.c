@@ -295,7 +295,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     fclose(fp);
     return 1;
   }
-
+printf("aaaaaaaaaaaaaaaa\n");
   //TODO: 
   size_t sizeOfArr = 0;
   //Tfind char struct size of each char struct. using inventory size * number of items in inventory
@@ -308,7 +308,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
       //printf("Error: invlaid item details detected");
       return 1;
     }
-
+printf("bbbbbbbbbbbbbbbbb\n");
     size_t charStructSize = sizeof(uint64_t) + sizeof(uint8_t) + DEFAULT_BUFFER_SIZE + DEFAULT_BUFFER_SIZE + sizeof(uint64_t);
     charStructSize += arr[i].inventorySize * (sizeof(uint64_t) * 2);
     sizeOfArr += charStructSize;
@@ -319,28 +319,30 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     printf("\tName: %s\n", arr[i].name);
     printf("\tInventorySize: %ld\n", arr[i].inventorySize);
   }
-
+printf("ccccccccccccccc");
   size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
   if (header_written != 1) {
     fclose(fp);
   return 1;
   }
-  
+  printf("dddddddddddddddddddddd");
   if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
     fclose(fp);
     //printf("a\n");
     return 1;
   }
-
+printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee");
   size_t els_written = 0;
   els_written = fwrite(arr, sizeOfArr, nmemb, fp);
   if (els_written != nmemb) {
     fclose(fp);
   return 1;
   }
-
+printf("ffffffffffffffffffffffffffffff");
   fflush(fp);
+printf("ggggggggggggggggggggggggggg");
   fclose(fp);
+printf("hhhhhhhhhhhhhhhhhhh");
   return 0;
 }
 
@@ -350,28 +352,30 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 //FIXME: NO TESTS AVAILABLE
 int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
     //Size of the Character array: A 64-bit, unsigned integer value indicating the number of Character structs stored in the file. This is the total number of characters to be loaded.    
-
+    printf("1");
     // Read the number of characters (nmemb) from the file header
     if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
         perror("Failed to read the header");
         return 1;
     }
 
+  printf("2");
     // Allocate memory for the characters
     *ptr = (struct Character*)malloc(sizeof(struct Character) * (*nmemb));
 
+printf("3");
     if (*ptr == NULL) {
         perror("Memory allocation failed");
         return 1;
     }
-
+printf("4");
     // Read the characters from the file and store them in the allocated memory
     if (read(fd, *ptr, sizeof(struct Character) * (*nmemb)) != sizeof(struct Character) * (*nmemb)) {
         perror("Failed to read character details");
         free(*ptr); // Free the allocated memory in case of an error
         return 1;
     }
-
+printf("5");
     return 0; // Success
     // //TODO: fflush()
     //fclose(fp);
