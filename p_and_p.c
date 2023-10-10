@@ -301,14 +301,14 @@ printf("aaaaaaaaaaaaaaaa\n");
   //Tfind char struct size of each char struct. using inventory size * number of items in inventory
   //add to runningSizeCountOfAllCharacterStructs
   for (size_t i = 0; i < nmemb; i++) {
-    printf("abababa\n");
-    int res = isValidCharacter(&arr[i]);
-    //printf("Item details %s is valid\n", arr[i].name);
-    if (res != 1) {
-      fclose(fp);
-      printf("Error: invlaid character detected");
-      return 1;
-    }
+    // printf("abababa\n");
+    // int res = isValidCharacter(&arr[i]);
+    // printf("Character %s is valid\n", arr[i].name);
+    // if (res != 1) {
+    //   fclose(fp);
+    //   printf("Error: invlaid character detected");
+    //   return 1;
+    // }
 printf("bbbbbbbbbbbbbbbbb\n");
     size_t charStructSize = sizeof(uint64_t) + sizeof(uint8_t) + DEFAULT_BUFFER_SIZE + DEFAULT_BUFFER_SIZE + sizeof(uint64_t);
     charStructSize += arr[i].inventorySize * (sizeof(uint64_t) * 2);
