@@ -301,11 +301,12 @@ printf("aaaaaaaaaaaaaaaa\n");
   //Tfind char struct size of each char struct. using inventory size * number of items in inventory
   //add to runningSizeCountOfAllCharacterStructs
   for (size_t i = 0; i < nmemb; i++) {
+    printf("abababa\n");
     int res = isValidCharacter(&arr[i]);
     //printf("Item details %s is valid\n", arr[i].name);
     if (res != 1) {
       fclose(fp);
-      //printf("Error: invlaid item details detected");
+      printf("Error: invlaid character detected");
       return 1;
     }
 printf("bbbbbbbbbbbbbbbbb\n");
@@ -319,30 +320,30 @@ printf("bbbbbbbbbbbbbbbbb\n");
     printf("\tName: %s\n", arr[i].name);
     printf("\tInventorySize: %ld\n", arr[i].inventorySize);
   }
-printf("ccccccccccccccc");
+printf("ccccccccccccccc\n");
   size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
   if (header_written != 1) {
     fclose(fp);
   return 1;
   }
-  printf("dddddddddddddddddddddd");
+  printf("dddddddddddddddddddddd\n");
   if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
     fclose(fp);
     //printf("a\n");
     return 1;
   }
-printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee");
+printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
   size_t els_written = 0;
   els_written = fwrite(arr, sizeOfArr, nmemb, fp);
   if (els_written != nmemb) {
     fclose(fp);
   return 1;
   }
-printf("ffffffffffffffffffffffffffffff");
+printf("ffffffffffffffffffffffffffffff\n");
   fflush(fp);
-printf("ggggggggggggggggggggggggggg");
+printf("ggggggggggggggggggggggggggg\n");
   fclose(fp);
-printf("hhhhhhhhhhhhhhhhhhh");
+printf("hhhhhhhhhhhhhhhhhhh\n");
   return 0;
 }
 
