@@ -301,6 +301,7 @@ printf("aaaaaaaaaaaaaaaa\n");
   //Tfind char struct size of each char struct. using inventory size * number of items in inventory
   //add to runningSizeCountOfAllCharacterStructs
   for (size_t i = 0; i < nmemb; i++) {
+    //FIXME:
     // printf("abababa\n");
     // int res = isValidCharacter(&arr[i]);
     // printf("Character %s is valid\n", arr[i].name);
@@ -329,7 +330,7 @@ printf("ccccccccccccccc\n");
   printf("dddddddddddddddddddddd\n");
   if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
     fclose(fp);
-    //printf("a\n");
+    printf("fseek failed --> closing fp \n");
     return 1;
   }
 printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
@@ -337,6 +338,7 @@ printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
   els_written = fwrite(arr, sizeOfArr, nmemb, fp);
   if (els_written != nmemb) {
     fclose(fp);
+    printf("els_written failed --> closing fp \n");
   return 1;
   }
 printf("ffffffffffffffffffffffffffffff\n");
