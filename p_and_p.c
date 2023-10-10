@@ -326,7 +326,7 @@ for (size_t i = 0; i < nmemb; i++) {
     //   printf("Error: invlaid character detected");
     //   return 1;
     // }
-printf("bbbbbbbbbbbbbbbbb\n");
+    printf("bbbbbbbbbbbbbbbbb\n");
     size_t charStructSize = sizeof(uint64_t) + sizeof(uint8_t) + DEFAULT_BUFFER_SIZE + DEFAULT_BUFFER_SIZE + sizeof(uint64_t);
     charStructSize += arr[i].inventorySize * (sizeof(uint64_t) * 2);
     sizeOfArr += charStructSize;
@@ -352,7 +352,8 @@ printf("bbbbbbbbbbbbbbbbb\n");
       fclose(fp);
       printf("characters_written failed , wrote %ld, instead of %ld characters--> closing fp \n", characters_written, nmemb);
     return 1;
-printf("ccccccccccccccc\n");
+  }
+  printf("ccccccccccccccc\n");
   
   //TODO: NEED TO WRITE EACH MEMBER INDIVIDUALLY ACCORDING TO ITS SIZE
   // els_written = fwrite(arr, sizeOfArr, nmemb, fp);
@@ -368,7 +369,7 @@ printf("ggggggggggggggggggggggggggg\n");
 printf("hhhhhhhhhhhhhhhhhhh\n");
   return 0;
 }
-}
+
 
 //TODO: validation
 
