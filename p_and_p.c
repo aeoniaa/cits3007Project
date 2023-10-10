@@ -338,7 +338,7 @@ printf("bbbbbbbbbbbbbbbbb\n");
     printf("\tInventorySize: %ld\n", arr[i].inventorySize);
 
     printf("size of char struct: %ld\n", charStructSize);
-    size_t characters_written = 0;
+    size_t els_written = 0;
     els_written = fwrite(arr, charStructSize, 1, fp);
     if (els_written != 1) {
       fclose(fp);
