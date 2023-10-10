@@ -43,7 +43,6 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
     return 1;
   }
 
-  //FIXME: delete before submitting  
   for (size_t i = 0; i < nmemb; i++) {
     int res = isValidItemDetails(&arr[i]);
     //printf("Item details %s is valid\n", arr[i].name);
@@ -66,7 +65,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   
   if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
     fclose(fp);
-    printf("a\n");
+    //printf("a\n");
     return 1;
   }
 
@@ -270,6 +269,7 @@ int isValidCharacter(const struct Character * c) {
 }
 
 //SHOULD BEHAVE AS ITEM DETAILS DOES
+//FIXME:SEGMENTATION　FAULT
 int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     //Full marks only needs functions that work with known valid files
     // Character struct --> the inventorySize says how many records are in the items carried array
@@ -288,60 +288,66 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
       //itemID: A 64-bit, unsigned integer value representing the unique identifier of the item class.
       //quantity: A 64-bit, unsigned integer value indicating the quantity of the item carried by the character.
 
+  FILE *fp;
 
-
-    // file open
-    //do work
-    // //TODO: fflush()
-    //fclose(fp);
-
-    FILE *fp;
-
-    // Open the file for writing
-    fp = fdopen(fd, "w");
-    if (fp == NULL) {
-        fclose(fp);
-        return 1;
-    }
-
-    // Validate each character in the array
-    for (size_t i = 0; i < nmemb; i++) {
-        int res = isValidCharacter(&arr[i]);
-        if (res != 1) {
-            fclose(fp);
-            return 1;
-        }
-    }
-
-    // Write the number of characters to file as a header
-    size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
-    if (header_written != 1) {
-        fclose(fp);
-        return 1;
-    }
-
-    // Seek to the position after the header
-    if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0) {
-        fclose(fp);
-        return 1;
-    }
-
-    // Write the array of characters to the file
-    size_t els_written = fwrite(arr, sizeof(struct Character), nmemb, fp);
-    if (els_written != nmemb) {
-        fclose(fp);
-        return 1;
-        }
-
-    // fflush() and close the file
-    fflush(fp);
+  fp = fdopen(fd, "w");
+  if (fp == NULL) {
     fclose(fp);
+    return 1;
+  }
 
-    return 0;
+  //TODO: 
+  size_t sizeOfArr = 0;
+  //Tfind char struct size of each char struct. using inventory size * number of items in inventory
+  //add to runningSizeCountOfAllCharacterStructs
+  for (size_t i = 0; i < nmemb; i++) {
+    int res = isValidCharacter(&arr[i]);
+    //printf("Item details %s is valid\n", arr[i].name);
+    if (res != 1) {
+      fclose(fp);
+      //printf("Error: invlaid item details detected");
+      return 1;
+    }
+
+    size_t charStructSize = sizeof(uint64_t) + sizeof(uint8_t) + DEFAULT_BUFFER_SIZE + DEFAULT_BUFFER_SIZE + sizeof(uint64_t);
+    charStructSize += arr[i].inventorySize * (sizeof(uint64_t) * 2);
+    sizeOfArr += charStructSize;
+    printf("Item %zu:\n", i + 1);
+    printf("\tCharacter ID: %lu\n", arr[i].characterID);
+    printf("\tSocialClass: %s\n", arr[i].socialClass);
+    printf("\tProfession: %s\n", arr[i].profession);
+    printf("\tName: %s\n", arr[i].name);
+    printf("\tInventorySize: %s\n", arr[i].inventorySize);
+  }
+
+  size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
+  if (header_written != 1) {
+    fclose(fp);
+  return 1;
+  }
+  
+  if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
+    fclose(fp);
+    //printf("a\n");
+    return 1;
+  }
+
+  size_t els_written = 0;
+  els_written = fwrite(arr, sizeOfArr, nmemb, fp);
+  if (els_written != nmemb) {
+    fclose(fp);
+  return 1;
+  }
+
+  fflush(fp);
+  fclose(fp);
+  return 0;
 }
+
 //TODO: validation
 
 //SHOULD BEHAVE AS ITEM DETAILS DOES
+//FIXME: NO TESTS AVAILABLE
 int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
     //Size of the Character array: A 64-bit, unsigned integer value indicating the number of Character structs stored in the file. This is the total number of characters to be loaded.    
 
@@ -371,6 +377,7 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
     //fclose(fp);
 }
 
+//FIXME: DO THIS!!!
 int secureLoad(const char *filepath) {
   return 0;
   //find where to obtain ItemDetails pte and nmemb variable in order to pass into playGame()
@@ -555,19 +562,20 @@ int main(int argc, char *argv[]){
 
   //SAVECHARACTER
   // // Sample data
-  //   struct Character arr[] = {
-  //       {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
-  //       {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
-  //       // Add more characters as needed
-  //   };
+    struct Character arr[] = {
+        {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
+        {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
+        // Add more characters as needed
+    };
 
-  //   size_t nmemb = sizeof(arr) / sizeof(arr[0]);
+    size_t nmemb = sizeof(arr) / sizeof(arr[0]);
 
-  //   // Call saveCharacters with the array pointer
-  //   if (saveCharacters(arr, nmemb, fileno(stdout)) != 0) {
-  //       fprintf(stderr, "Error: Failed to save characters\n");
-  //       return 1;
-  //   }
+    // Call saveCharacters with the array pointer
+    if (saveCharacters(arr, nmemb, fileno(stdout)) != 0) {
+        fprintf(stderr, "Error: Failed to save characters\n");
+        return 1;
+    }
+    printf("passed save character\n");
 
 
   }
