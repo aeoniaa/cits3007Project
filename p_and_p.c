@@ -338,7 +338,7 @@ printf("bbbbbbbbbbbbbbbbb\n");
     printf("\tInventorySize: %ld\n", arr[i].inventorySize);
 
     printf("size of char struct: %ld\n", charStructSize);
-
+    size_t characters_written = 0;
     els_written = fwrite(arr, charStructSize, 1, fp);
     if (els_written != 1) {
       fclose(fp);
@@ -355,12 +355,12 @@ printf("bbbbbbbbbbbbbbbbb\n");
 printf("ccccccccccccccc\n");
   
   //TODO: NEED TO WRITE EACH MEMBER INDIVIDUALLY ACCORDING TO ITS SIZE
-  els_written = fwrite(arr, sizeOfArr, nmemb, fp);
-  if (els_written != nmemb) {
-    fclose(fp);
-    printf("els_written failed --> closing fp \n");
-  return 1;
-  }
+  // els_written = fwrite(arr, sizeOfArr, nmemb, fp);
+  // if (els_written != nmemb) {
+  //   fclose(fp);
+  //   printf("els_written failed --> closing fp \n");
+  // return 1;
+  // }
 printf("ffffffffffffffffffffffffffffff\n");
   fflush(fp);
 printf("ggggggggggggggggggggggggggg\n");
