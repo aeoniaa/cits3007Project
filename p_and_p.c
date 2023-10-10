@@ -314,10 +314,10 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     sizeOfArr += charStructSize;
     printf("Item %zu:\n", i + 1);
     printf("\tCharacter ID: %lu\n", arr[i].characterID);
-    printf("\tSocialClass: %s\n", arr[i].socialClass);
+    printf("\tSocialClass: %d\n", arr[i].socialClass);
     printf("\tProfession: %s\n", arr[i].profession);
     printf("\tName: %s\n", arr[i].name);
-    printf("\tInventorySize: %s\n", arr[i].inventorySize);
+    printf("\tInventorySize: %ld\n", arr[i].inventorySize);
   }
 
   size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
