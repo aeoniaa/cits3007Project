@@ -350,7 +350,7 @@ printf("bbbbbbbbbbbbbbbbb\n");
   printf("size of char struct: %ld\n", sizeOfArr);
   if (characters_written != nmemb) {
       fclose(fp);
-      printf("characters_written failed , wrote %ld, instead of %d characters--> closing fp \n", characters_written, nmemb);
+      printf("characters_written failed , wrote %ld, instead of %ld characters--> closing fp \n", characters_written, nmemb);
     return 1;
 printf("ccccccccccccccc\n");
   
