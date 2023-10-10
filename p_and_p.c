@@ -298,9 +298,25 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 printf("aaaaaaaaaaaaaaaa\n");
   //TODO: 
   size_t sizeOfArr = 0;
+  size_t characters_written = 0;
   //Tfind char struct size of each char struct. using inventory size * number of items in inventory
   //add to runningSizeCountOfAllCharacterStructs
-  for (size_t i = 0; i < nmemb; i++) {
+  
+  size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
+  if (header_written != 1) {
+    fclose(fp);
+  return 1;
+  }
+  printf("dddddddddddddddddddddd\n");
+  //FIXME: this is where the seg fault occurs
+  if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
+    fclose(fp);
+    printf("fseek failed --> closing fp \n");
+    return 1;
+  }
+printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
+
+for (size_t i = 0; i < nmemb; i++) {
     //FIXME:
     // printf("abababa\n");
     // int res = isValidCharacter(&arr[i]);
@@ -320,21 +336,25 @@ printf("bbbbbbbbbbbbbbbbb\n");
     printf("\tProfession: %s\n", arr[i].profession);
     printf("\tName: %s\n", arr[i].name);
     printf("\tInventorySize: %ld\n", arr[i].inventorySize);
-  }
-printf("ccccccccccccccc\n");
-  size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
-  if (header_written != 1) {
-    fclose(fp);
-  return 1;
-  }
-  printf("dddddddddddddddddddddd\n");
-  if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
-    fclose(fp);
-    printf("fseek failed --> closing fp \n");
+
+    printf("size of char struct: %ld\n", charStructSize);
+
+    els_written = fwrite(arr, charStructSize, 1, fp);
+    if (els_written != 1) {
+      fclose(fp);
+      printf("els_written failed --> closing fp \n");
     return 1;
+    }
+    characters_written += 1;
   }
-printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
-  size_t els_written = 0;
+  printf("size of char struct: %ld\n", sizeOfArr);
+  if (characters_written != nmemb) {
+      fclose(fp);
+      printf("characters_written failed , wrote %ld, instead of %d characters--> closing fp \n", characters_written, nmemb);
+    return 1;
+printf("ccccccccccccccc\n");
+  
+  //TODO: NEED TO WRITE EACH MEMBER INDIVIDUALLY ACCORDING TO ITS SIZE
   els_written = fwrite(arr, sizeOfArr, nmemb, fp);
   if (els_written != nmemb) {
     fclose(fp);
@@ -575,10 +595,10 @@ int main(int argc, char *argv[]){
         // Add more characters as needed
     };
 
-    size_t nmemb = sizeof(arr) / sizeof(arr[0]);
+    size_t nmembSAVECHAR = sizeof(arr) / sizeof(arr[0]);
 
     // Call saveCharacters with the array pointer
-    if (saveCharacters(arr, nmemb, fileno(stdout)) != 0) {
+    if (saveCharacters(arr, nmembSAVECHAR, fileno(stdout)) != 0) {
         fprintf(stderr, "Error: Failed to save characters\n");
         return 1;
     }
