@@ -304,9 +304,15 @@ printf("aaaaaaaaaaaaaaaa\n");
   
   size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
   if (header_written != 1) {
+    printf("Failed to write header\n");
     fclose(fp);
   return 1;
   }
+  if (header_written ==0 ) {
+    printf("header written worked\n");
+  }
+
+  
   printf("dddddddddddddddddddddd\n");
   //FIXME: this is where the seg fault occurs
   if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
@@ -448,9 +454,9 @@ int open_with_fileno(const char * infile_path) {
 void assert_itemDetails_are_equal(const struct ItemDetails *id1, const struct ItemDetails *id2) {
   assert(id1->itemID == id2->itemID); //, "ItemID for id1 and id2 should be equal");
   int res = strcmp(id1->name, id2->name);
-  if (res == 0) printf("id1->name, id2->name");
+  //if (res == 0) printf("id1->name, id2->name");
   res = strcmp(id1->desc, id2->desc);
-  if (res == 0) printf("id1->desc, id2->desc");
+  //if (res == 0) printf("id1->desc, id2->desc");
 }
 
 // read the contents of `filename` into malloc'd memory.
