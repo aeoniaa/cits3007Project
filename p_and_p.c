@@ -275,7 +275,6 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     // When reading from file you need to know how much memory you are reading, its variable depending on inventory size
   
     //TODO: fwrite characters struct
-    //TODO: STRUCT NEED TO BE ZEROED OUT FIRST then add in the name. Find a function that takes a value and copies it through the whole array
     
     //Header = 64-bit unsigned int indicating number of Character structs stored in the file, and total number of character to be loaded
     //characterId = A 64-bit, unsigned integer value representing the unique identifier of the character.
@@ -287,95 +286,134 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
       //itemID: A 64-bit, unsigned integer value representing the unique identifier of the item class.
       //quantity: A 64-bit, unsigned integer value indicating the quantity of the item carried by the character.
 
-  FILE *fp;
-
-  fp = fdopen(fd, "w");
-  if (fp == NULL) {
-    //printf("Error opening fd as fp\n");
-    fclose(fp);
-    return 1;
-  }
-//printf("aaaaaaaaaaaaaaaa\n");
-  //TODO: 
-
-  //Tfind char struct size of each char struct. using inventory size * number of items in inventory
-  //add to runningSizeCountOfAllCharacterStructs
-  
-  size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
-  if (header_written != 1) {
-    //printf("Failed to write header\n");
-    fclose(fp);
-  return 1;
-  }
-  // if (header_written ==1 ) {
-  //   //printf("header written worked\n");
-  // }
 
 
- // printf("dddddddddddddddddddddd\n");
-  //FIXME: this is where the seg fault occurs
-  int res = fseek(fp, sizeof(uint64_t), SEEK_SET);
-  if (res != 0){
-    fclose(fp);
-    printf("fseek failed --> closing fp \n");
-    return 1;
-  }
-//printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
-  size_t sizeOfArr = 0;
-  size_t characters_written = 0;
-for (size_t i = 0; i < nmemb; i++) {
-    //FIXME:
-    // printf("abababa\n");
-    // int res = isValidCharacter(&arr[i]);
-    // printf("Character %s is valid\n", arr[i].name);
-    // if (res != 1) {
-    //   fclose(fp);
-    //   printf("Error: invlaid character detected");
-    //   return 1;
-    // }
-    //printf("bbbbbbbbbbbbbbbbb\n");
-    //FIXME: THIS IS THE PROBLEM: Size of character array incoming not calculated properly
-    size_t charStructSize = sizeof(uint64_t) + sizeof(uint8_t) + DEFAULT_BUFFER_SIZE + DEFAULT_BUFFER_SIZE + sizeof(uint64_t);
-    charStructSize += arr[i].inventorySize * (sizeof(uint64_t) * 2);
-    sizeOfArr += charStructSize;
-    printf("Item %zu:\n", i + 1);
-    printf("\tCharacter ID: %ld\n", arr[i].characterID);
-    printf("\tSocialClass: %d\n", arr[i].socialClass);
-    printf("\tProfession: %s\n", arr[i].profession);
-    printf("\tName: %s\n", arr[i].name);
-    printf("\tInventorySize: %ld\n", arr[i].inventorySize);
+FILE *fp;
 
-    printf("size of char struct: %ld\n", charStructSize);
-    size_t els_written = 0;
-    els_written = fwrite(arr, charStructSize, 1, fp);
-    if (els_written != 1) {
-      fclose(fp);
-      printf("els_written failed --> closing fp \n");
-    return 1;
+    fp = fdopen(fd, "wb"); // Open in binary write mode
+    if (fp == NULL) {
+        fclose(fp);
+        return 1;
     }
-    characters_written += 1;
-  }
-  printf("size of char struct: %ld\n", sizeOfArr);
-  if (characters_written != nmemb) {
-      fclose(fp);
-      printf("characters_written failed , wrote %ld, instead of %ld characters--> closing fp \n", characters_written, nmemb);
-    return 1;
-  }
-  //printf("ccccccccccccccc\n");
+
+    // Write the header: 64-bit unsigned integer indicating the number of Character structs
+    if (fwrite(&nmemb, sizeof(nmemb), 1, fp) != 1) {
+        fclose(fp);
+        return 1;
+    }
+
+    // Write each Character struct and its associated ItemCarried data
+    for (size_t i = 0; i < nmemb; i++) {
+        // Write the Character struct
+        if (fwrite(&arr[i], sizeof(struct Character), 1, fp) != 1) {
+            fclose(fp);
+            return 1;
+        }
+
+        // Write the associated ItemCarried data based on inventorySize
+        if (fwrite(arr[i].inventory, sizeof(struct ItemCarried), arr[i].inventorySize, fp) != arr[i].inventorySize) {
+            fclose(fp);
+            return 1;
+        }
+    }
+
+    fflush(fp);
+    fclose(fp);
+    return 0;
+
+
+
+
+// //PREVIOUSVERSION
+//   FILE *fp;
+
+//   fp = fdopen(fd, "w");
+//   if (fp == NULL) {
+//     //printf("Error opening fd as fp\n");
+//     fclose(fp);
+//     return 1;
+//   }
+// //printf("aaaaaaaaaaaaaaaa\n");
+//   //TODO: 
+
+//   //Tfind char struct size of each char struct. using inventory size * number of items in inventory
+//   //add to runningSizeCountOfAllCharacterStructs
   
-  //TODO: NEED TO WRITE EACH MEMBER INDIVIDUALLY ACCORDING TO ITS SIZE
-  // els_written = fwrite(arr, sizeOfArr, nmemb, fp);
-  // if (els_written != nmemb) {
-  //   fclose(fp);
-  //   printf("els_written failed --> closing fp \n");
-  // return 1;
-  // }
-//printf("ffffffffffffffffffffffffffffff\n");
-  fflush(fp);
-//printf("ggggggggggggggggggggggggggg\n");
-  fclose(fp);
-printf("hhhhhhhhhhhhhhhhhhh\n");
-  return 0;
+//   size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
+//   if (header_written != 1) {
+//     //printf("Failed to write header\n");
+//     fclose(fp);
+//   return 1;
+//   }
+//   // if (header_written ==1 ) {
+//   //   //printf("header written worked\n");
+//   // }
+
+
+//  // printf("dddddddddddddddddddddd\n");
+//   //FIXME: this is where the seg fault occurs
+//   int res = fseek(fp, sizeof(uint64_t), SEEK_SET);
+//   if (res != 0){
+//     fclose(fp);
+//     printf("fseek failed --> closing fp \n");
+//     return 1;
+//   }
+// //printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
+//   size_t sizeOfArr = 0;
+//   size_t characters_written = 0;
+// for (size_t i = 0; i < nmemb; i++) {
+//     //FIXME:
+//     // printf("abababa\n");
+//     // int res = isValidCharacter(&arr[i]);
+//     // printf("Character %s is valid\n", arr[i].name);
+//     // if (res != 1) {
+//     //   fclose(fp);
+//     //   printf("Error: invlaid character detected");
+//     //   return 1;
+//     // }
+//     //printf("bbbbbbbbbbbbbbbbb\n");
+//     //FIXME: THIS IS THE PROBLEM: Size of character array incoming not calculated properly
+//     size_t charStructSize = sizeof(uint64_t) + sizeof(uint8_t) + DEFAULT_BUFFER_SIZE + DEFAULT_BUFFER_SIZE + sizeof(uint64_t);
+//     charStructSize += arr[i].inventorySize * (sizeof(uint64_t) * 2);
+//     sizeOfArr += charStructSize;
+//     printf("Item %zu:\n", i + 1);
+//     printf("\tCharacter ID: %ld\n", arr[i].characterID);
+//     printf("\tSocialClass: %d\n", arr[i].socialClass);
+//     printf("\tProfession: %s\n", arr[i].profession);
+//     printf("\tName: %s\n", arr[i].name);
+//     printf("\tInventorySize: %ld\n", arr[i].inventorySize);
+
+//     printf("size of char struct: %ld\n", charStructSize);
+//     size_t els_written = 0;
+//     els_written = fwrite(arr, charStructSize, 1, fp);
+//     if (els_written != 1) {
+//       fclose(fp);
+//       printf("els_written failed --> closing fp \n");
+//     return 1;
+//     }
+//     characters_written += 1;
+//   }
+//   printf("size of char struct: %ld\n", sizeOfArr);
+//   if (characters_written != nmemb) {
+//       fclose(fp);
+//       printf("characters_written failed , wrote %ld, instead of %ld characters--> closing fp \n", characters_written, nmemb);
+//     return 1;
+//   }
+//   //printf("ccccccccccccccc\n");
+  
+//   //TODO: NEED TO WRITE EACH MEMBER INDIVIDUALLY ACCORDING TO ITS SIZE
+//   // els_written = fwrite(arr, sizeOfArr, nmemb, fp);
+//   // if (els_written != nmemb) {
+//   //   fclose(fp);
+//   //   printf("els_written failed --> closing fp \n");
+//   // return 1;
+//   // }
+// //printf("ffffffffffffffffffffffffffffff\n");
+//   fflush(fp);
+// //printf("ggggggggggggggggggggggggggg\n");
+//   fclose(fp);
+// printf("hhhhhhhhhhhhhhhhhhh\n");
+//   return 0;
 }
 
 
