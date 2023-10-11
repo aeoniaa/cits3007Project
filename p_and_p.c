@@ -26,8 +26,6 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <time.h>
 #include <assert.h> //TODO: delete before submittion
 #include <check.h> //TODO: delete before submittion
 
