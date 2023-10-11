@@ -291,31 +291,29 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 
   FILE *fp;
 
-  fp = fdopen(fd, "wb"); // Open in binary write mode
+  fp = fdopen(fd, "wb"); 
   if (fp == NULL) {
       fclose(fp);
       return 1;
   }
 
-  // Write the header: 64-bit unsigned integer indicating the number of Character structs
   if (fwrite(&nmemb, sizeof(nmemb), 1, fp) != 1) {
       fclose(fp);
       return 1;
   }
 
-  // Write each Character struct and its associated ItemCarried data
   for (size_t i = 0; i < nmemb; i++) { 
     int res = isValidCharacter(&arr[i]);
-    //printf("Item details %s is valid\n", arr[i].name);
     if (res != 1) {
       fclose(fp);
       return 1;
     }
 
+  //FIXME: stack-buffer-overflow
     size_t sizeOfCharStruct = 1208;
-    printf("size of ItemCarried: %ld\n", sizeof(struct ItemCarried));
+    printf("size of default struct Character: %ld\n", sizeof(struct Character));
+    printf("size of struct ItemCarried: %ld\n", sizeof(struct ItemCarried));
     sizeOfCharStruct += (sizeof(struct ItemCarried) * arr[i].inventorySize);
-      // Write the Character struct
     if (fwrite(&arr[i], sizeOfCharStruct, 1, fp) != 1) {
         fclose(fp);
         return 1;
@@ -323,7 +321,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   }
 
   //     // Write the associated ItemCarried data based on inventorySize
-  //   if (fwrite(arr[i].inventory, sizeof(struct ItemCarried), arr[i].inventorySize, fp) != arr[i].inventorySize) {
+  //   if (fwrite(arr[i].inventory, sizeof(struct ItemCarried)*arr[i].inventorySize, arr[i].inventorySize, fp) != arr[i].inventorySize) {
   //       fclose(fp);
   //       return 1;
   //   }
