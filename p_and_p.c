@@ -81,7 +81,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   }
 
 
-int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const char* filename); {
+int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const char* filename) {
   return 0;
 }
 
