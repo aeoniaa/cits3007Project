@@ -76,7 +76,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   return 1;
   }
 
-  fflush(fp)
+  fflush(fp);
   fclose(fp);
   return 0;
   }
@@ -754,23 +754,23 @@ printf("e\n");
     characters[1].inventory[0].quantity = 8;
 
     // Save the Character data to a binary file
-    int fd = creat("tmp.dat", 0644);
-    if (fd == -1) {
+    FILE *fp = fopen("tmp.dat", "wb");
+    if (fp == NULL) {
         perror("Failed to create file");
         return 1;
     }
 
-    if (saveCharacters(characters, 2, fd) != 0) {
+    if (saveCharacters(characters, 2, fileno(fp)) != 0) {
         perror("Failed to save characters");
         return 1;
     }
 
-    close(fd);
+    close(fp);
 
     // Read the data back from the file to verify correctness
     struct Character loadedCharacters[2];
-    fd = open("tmp.dat", O_RDONLY);
-    if (fd == -1) {
+    fp = fopen("tmp.dat", "r");
+    if (fp == NULL) {
         perror("Failed to open file for reading");
         return 1;
     }
