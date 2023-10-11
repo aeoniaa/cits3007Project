@@ -386,10 +386,11 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
 
 
 /**
- * @brief
- * TODO:
- * 
- * DESCRIPTION
+ * @brief Loads the game after checking user holds correct permissions to load the ItemDetails database.
+ *  
+ * Function attempts to acquire appropriate permissions for opening the ItemDetails database (that is: the effective userID is set
+ * to the userID of pitchpoltadmin). Opens the database to a file descriptor, drops permissions, then loads the database from the specified file, call the function
+ * playGame using the loaded data and the number of items in the loaded data.
  * @param filepath
  * @return 1 if an error occurs during deserialization, 2 if an error occurs while aquiring or dropping permissions, or 0 otherwise.
 =*/
@@ -447,18 +448,11 @@ int secureLoad(const char *filepath) {
   playGame(loadedItems, nmemb);
   free(loadedItems);
   return 0;
-  //find where to obtain ItemDetails pte and nmemb variable in order to pass into playGame()
-  //setuid: secure coding cookbook, labs
-  //calls playGame() --> //TODO: make stub with empty body in a test_utils.c
   /**
-   * Forum post explaining functions
-   * 5.2 of the paper link - use the easy, powerful one?
-   * If calling non-standard funcs, invoked in right way -> lab explains how to invoke them in the right way, otherwise moodle will fail
-   * 
+  5.2 of the paper link - use the easy, powerful one?
   The specification doesn't say whether the pitchpoltadmin account userID is zero, 
   so you'll have to make a reasonable assumption about this (which you should document in your submitted code). 
   Given what has been discussed in lectures and labs, would zero be a sensible choice for the pitchpoltadmin account?
-  
   */
   //10 marks --> look at project spec!!!!!!
 
