@@ -319,6 +319,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
         fclose(fp);
         return 1;
     }
+  }
 
   //     // Write the associated ItemCarried data based on inventorySize
   //   if (fwrite(arr[i].inventory, sizeof(struct ItemCarried), arr[i].inventorySize, fp) != arr[i].inventorySize) {
