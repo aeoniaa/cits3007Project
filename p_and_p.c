@@ -310,22 +310,25 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     }
 
   //FIXME: stack-buffer-overflow
-    size_t sizeOfCharStruct = 1208;
-    printf("size of default struct Character: %ld\n", sizeof(struct Character));
-    printf("size of struct ItemCarried: %ld\n", sizeof(struct ItemCarried));
-    sizeOfCharStruct += (sizeof(struct ItemCarried) * arr[i].inventorySize);
-    if (fwrite(&arr[i], sizeOfCharStruct, 1, fp) != 1) {
-        fclose(fp);
-        return 1;
-    }
-  }
-
-  //     // Write the associated ItemCarried data based on inventorySize
-  //   if (fwrite(arr[i].inventory, sizeof(struct ItemCarried)*arr[i].inventorySize, arr[i].inventorySize, fp) != arr[i].inventorySize) {
+  //   size_t sizeOfCharStruct = sizeof(struct Character); //1208, does not include ItemCarried size
+  //   //printf("size of struct ItemCarried: %ld\n", sizeof(struct ItemCarried));
+  //   sizeOfCharStruct += (sizeof(struct ItemCarried) * arr[i].inventorySize); //sizeof(struct ItemCarried) = 16
+  //   if (fwrite(&arr[i], sizeOfCharStruct, 1, fp) != 1) {
   //       fclose(fp);
   //       return 1;
   //   }
   // }
+      if (fwrite(&arr[i], sizeof(struct Character), 1, fp) != 1) {
+        fclose(fp);
+        return 1;
+    }
+
+      // Write the associated ItemCarried data based on inventorySize
+    if (fwrite(arr[i].inventory, sizeof(struct ItemCarried)*arr[i].inventorySize, arr[i].inventorySize, fp) != arr[i].inventorySize) {
+        fclose(fp);
+        return 1;
+    }
+  }
 
   fflush(fp);
   fclose(fp);
