@@ -315,7 +315,8 @@ printf("aaaaaaaaaaaaaaaa\n");
 
   printf("dddddddddddddddddddddd\n");
   //FIXME: this is where the seg fault occurs
-  if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
+  size_t res = fseek(fp, sizeof(uint64_t), SEEK_SET);
+  if (res != 0){
     fclose(fp);
     printf("fseek failed --> closing fp \n");
     return 1;
@@ -595,8 +596,16 @@ int main(int argc, char *argv[]){
     free(file_conts);
 
 
+
+
+
+
+
+
+
+
   //SAVECHARACTER
-  // // Sample data
+
     struct Character arr[] = {
         {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
         {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
@@ -605,14 +614,42 @@ int main(int argc, char *argv[]){
 
     size_t nmembSAVECHAR = sizeof(arr) / sizeof(arr[0]);
 
-    printf("save characters %ld\n", nmembSAVECHAR);
+  char* Afile_conts = NULL;
+  size_t Afile_size = 0;
 
-    // Call saveCharacters with the array pointer
-    if (saveCharacters(arr, nmembSAVECHAR, fileno(stdout)) != 0) {
+  FILE *Aofp = fopen("tmp.dat", "wb");
+  assert(Aofp != NULL);
+  int saveCharfd = fileno(Aofp);
+  assert(saveCharfd != -1);
+
+if (saveCharacters(arr, nmembSAVECHAR, fileno(stdout)) != 0) {
         fprintf(stderr, "Error: Failed to save characters\n");
         return 1;
     }
     printf("passed save character\n");
 
+  fclose(Aofp);
 
+  res = slurp_file("tmp.dat", "rb", &Afile_conts, &Afile_size);
+  assert(res == 0);
+
+  const size_t Aexpected_size = sizeof(uint64_t) + sizeof(arr[0]) + sizeof(arr[1]);
+
+  //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
+  assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
+
+   // metadata should be `1`
+  size_t Aactual_read_metadata = 0;
+  memcpy(&Aactual_read_metadata, Afile_conts, sizeof(size_t));
+  //assert(Aactual_read_metadata == itemArr_size); //"size of written metadata should be as expected");
+
+  //  // following the metadata should be our struct
+  // struct ItemDetails actual_read_item = { 0 };
+  // memcpy(&actual_read_item, file_conts + sizeof(size_t), sizeof(struct ItemDetails));
+  // //assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected"
+
+  // assert_itemDetails_are_equal(&actual_read_item, &(itemArr[0]));
+
+  if (Afile_conts != NULL)
+    free(Afile_conts);
   }
