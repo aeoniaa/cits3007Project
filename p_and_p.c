@@ -126,7 +126,7 @@ int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
 
     // Read the number of records (nmemb) from the file header
     if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
-        perror("Failed to read the header"); /TODO: get rid of perror(). do dif error handling
+        perror("Failed to read the header"); //TODO: get rid of perror(). do dif error handling
         return 1;
     }
 
@@ -134,7 +134,7 @@ int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
     *ptr = (struct ItemDetails*)malloc(sizeof(struct ItemDetails) * (*nmemb));
 
     if (*ptr == NULL) {
-        perror("Memory allocation failed"); /TODO: get rid of perror(). do dif error handling
+        perror("Memory allocation failed"); //TODO: get rid of perror(). do dif error handling
         return 1;
     }
 
@@ -653,11 +653,11 @@ int main(int argc, char *argv[]){
 
 //   //SAVECHARACTER
 
-    struct Character arr[] = {
-        {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
-        {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
-        // Add more characters as needed
-    };
+    // struct Character arr[] = {
+    //     {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
+    //     {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
+    //     // Add more characters as needed
+    // };
     struct Character arr[] = { {
   .characterID = 1, //64bit
   .socialClass = MERCHANT, //8bit
