@@ -316,7 +316,7 @@ printf("aaaaaaaaaaaaaaaa\n");
 
   printf("dddddddddddddddddddddd\n");
   //FIXME: this is where the seg fault occurs
-  size_t res = fseek(fp, sizeof(uint64_t), SEEK_SET);
+  int res = fseek(fp, sizeof(uint64_t), SEEK_SET);
   if (res != 0){
     fclose(fp);
     printf("fseek failed --> closing fp \n");
