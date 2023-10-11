@@ -81,9 +81,7 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   }
 
 
-int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const char* filename) {
-  return 0;
-}
+int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const char* filename);
 
 /**
  * @brief 
@@ -661,7 +659,7 @@ int main(int argc, char *argv[]){
   .socialClass = MERCHANT, //8bit
   .profession = "inn-keeper", //DEFAULT_BUFFER_SIZE = 512
   .name = "Edgar Crawford", //DEFAULT_BUFFER_SIZE = 512
-  .inventorySize = 0, //64bit
+//  .inventorySize = 0, //64bit
 //   .inventory = NULL
 // } };
 
