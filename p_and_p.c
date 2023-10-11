@@ -653,11 +653,11 @@ int main(int argc, char *argv[]){
 
 //   //SAVECHARACTER
 
-    // struct Character arr[] = {
-    //     {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
-    //     {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
-    //     // Add more characters as needed
-    // };
+    struct Character arr[] = {
+        {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
+        {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
+        // Add more characters as needed
+    };
     struct Character arr[] = { {
   .characterID = 1, //64bit
   .socialClass = MERCHANT, //8bit
@@ -726,68 +726,70 @@ printf("c\n");
 
   assert_characters_are_equal(&Aactual_read_item, &(arr[0]));
 
-printf("e\n");
-  if (Afile_conts != NULL)
+  printf("e\n");
+  if (Afile_conts != NULL){
     free(Afile_conts);
   }
 
-    // Create an array of Character structures
-    struct Character characters[2];
 
-    // Initialize character data
-    characters[0].characterID = 1;
-    characters[0].socialClass = MERCHANT;
-    strcpy(characters[0].profession, "Merchant");
-    strcpy(characters[0].name, "John Doe");
-    characters[0].inventorySize = 2;
-    characters[0].inventory[0].itemID = 101;
-    characters[0].inventory[0].quantity = 3;
-    characters[0].inventory[1].itemID = 102;
-    characters[0].inventory[1].quantity = 5;
+//FROM CHATGPT TESTING
+    // // Create an array of Character structures
+    // struct Character characters[2];
 
-    characters[1].characterID = 2;
-    characters[1].socialClass = LABOURER;
-    strcpy(characters[1].profession, "Labourer");
-    strcpy(characters[1].name, "Jane Smith");
-    characters[1].inventorySize = 1;
-    characters[1].inventory[0].itemID = 201;
-    characters[1].inventory[0].quantity = 8;
+    // // Initialize character data
+    // characters[0].characterID = 1;
+    // characters[0].socialClass = MERCHANT;
+    // strcpy(characters[0].profession, "Merchant");
+    // strcpy(characters[0].name, "John Doe");
+    // characters[0].inventorySize = 2;
+    // characters[0].inventory[0].itemID = 101;
+    // characters[0].inventory[0].quantity = 3;
+    // characters[0].inventory[1].itemID = 102;
+    // characters[0].inventory[1].quantity = 5;
 
-    // Save the Character data to a binary file
-    FILE *fp = fopen("tmp.dat", "wb");
-    if (fp == NULL) {
-        perror("Failed to create file");
-        return 1;
-    }
+    // characters[1].characterID = 2;
+    // characters[1].socialClass = LABOURER;
+    // strcpy(characters[1].profession, "Labourer");
+    // strcpy(characters[1].name, "Jane Smith");
+    // characters[1].inventorySize = 1;
+    // characters[1].inventory[0].itemID = 201;
+    // characters[1].inventory[0].quantity = 8;
 
-    if (saveCharacters(characters, 2, fileno(fp)) != 0) {
-        perror("Failed to save characters");
-        return 1;
-    }
+    // // Save the Character data to a binary file
+    // FILE *fp = fopen("tmp.dat", "wb");
+    // if (fp == NULL) {
+    //     perror("Failed to create file");
+    //     return 1;
+    // }
 
-    close(fp);
+    // if (saveCharacters(characters, 2, fileno(fp)) != 0) {
+    //     perror("Failed to save characters");
+    //     return 1;
+    // }
 
-    // Read the data back from the file to verify correctness
-    struct Character loadedCharacters[2];
-    fp = fopen("tmp.dat", "r");
-    if (fp == NULL) {
-        perror("Failed to open file for reading");
-        return 1;
-    }
+    // close(fp);
 
-    if (read(fd, loadedCharacters, sizeof(loadedCharacters)) != sizeof(loadedCharacters)) {
-        perror("Failed to read characters from file");
-        return 1;
-    }
+    // // Read the data back from the file to verify correctness
+    // struct Character loadedCharacters[2];
+    // fp = fopen("tmp.dat", "r");
+    // if (fp == NULL) {
+    //     perror("Failed to open file for reading");
+    //     return 1;
+    // }
 
-    close(fd);
+    // if (read(fd, loadedCharacters, sizeof(loadedCharacters)) != sizeof(loadedCharacters)) {
+    //     perror("Failed to read characters from file");
+    //     return 1;
+    // }
 
-    // Compare the loaded data with the original data
-    if (memcmp(characters, loadedCharacters, sizeof(characters)) == 0) {
-        printf("Character data successfully saved and loaded.\n");
-    } else {
-        printf("Character data mismatch after loading.\n");
-    }
+    // close(fd);
 
-    return 0;
+    // // Compare the loaded data with the original data
+    // if (memcmp(characters, loadedCharacters, sizeof(characters)) == 0) {
+    //     printf("Character data successfully saved and loaded.\n");
+    // } else {
+    //     printf("Character data mismatch after loading.\n");
+    // }
+
+    // return 0;
 }
