@@ -663,17 +663,17 @@ int main(int argc, char *argv[]){
   .socialClass = MERCHANT, //8bit
   .profession = "inn-keeper", //DEFAULT_BUFFER_SIZE = 512
   .name = "Edgar Crawford", //DEFAULT_BUFFER_SIZE = 512
-//   .inventorySize = 0, //64bit
-//   .inventory = { }
-// } };
-
-.inventorySize = 1, //64bit
-  .inventory = {
-    { .itemID = 200648657395984580, //64bit
-      .quantity = 1 //64bit
-    }
-  }
+  .inventorySize = 0, //64bit
+  .inventory = { }
 } };
+
+// .inventorySize = 1, //64bit
+//   .inventory = {
+//     { .itemID = 200648657395984580, //64bit
+//       .quantity = 1 //64bit
+//     }
+//   }
+// } };
 
     size_t nmembSAVECHAR = sizeof(arr) / sizeof(arr[0]);
 
