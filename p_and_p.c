@@ -469,7 +469,10 @@ int secureLoad(const char *filepath) {
 
 }
 
-void playGame(struct ItemDetails* ptr, size_t nmemb);
+//TODO: RESET  BEFORE SUBMITTING: void playGame(struct ItemDetails* ptr, size_t nmemb);
+void playGame(struct ItemDetails* ptr, size_t nmemb){
+  printf("playGame done\n");
+}
 
 //TODO: DELETE THESE FUNCTIONS: THEY WERE FOR CHECKING
 
