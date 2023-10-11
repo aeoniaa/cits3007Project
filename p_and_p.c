@@ -667,6 +667,7 @@ int main(int argc, char *argv[]){
   .inventory = { }
 } };
 
+//FIXME: works with empty inventory
 // .inventorySize = 1, //64bit
 //   .inventory = {
 //     { .itemID = 200648657395984580, //64bit
@@ -704,6 +705,7 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
   const size_t Aexpected_size = sizeof(uint64_t) + sizeof(arr[0]);
 
   //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
+  printf("size of arr[] = %ld\n", sizeof(arr[]));
   printf("Afilesize: %ld\n", Afile_size);
   printf("AExpectedfilesize: %ld\n", Aexpected_size);
   assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
