@@ -464,9 +464,10 @@ void assert_itemDetails_are_equal(const struct ItemDetails *id1, const struct It
 void assert_characters_are_equal(const struct Character *id1, const struct Character *id2) {
   assert(id1->characterID == id2->characterID); //, "ItemID for id1 and id2 should be equal");
   int res = strcmp(id1->name, id2->name);
-  //if (res == 0) printf("id1->name, id2->name");
-  res = strcmp(id1->inventorySize, id2->inventorySize);
+  //if (res == 0) printf("id1->name ==  id2->name");
+  assert(id1->inventorySize == id2->inventorySize);
   //if (res == 0) printf("id1->desc, id2->desc");
+  printf("assertCharactersEqual passed");
 }
 
 // read the contents of `filename` into malloc'd memory.
@@ -666,7 +667,7 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
 
   //  // following the metadata should be our struct
   struct Character Aactual_read_item = { 0 };
-  memcpy(&Aactual_read_item, Afile_conts + sizeof(size_t), sizeof(arr[0]);
+  memcpy(&Aactual_read_item, Afile_conts + sizeof(size_t), sizeof(arr[0]));
   // //assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected"
 
   assert_characters_are_equal(&Aactual_read_item, &(arr[0]));
