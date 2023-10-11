@@ -290,7 +290,8 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 
   FILE *fp;
 
-  fp = fdopen(fd, "w+");
+  //
+  fp = fdopen(fd, "w");
   if (fp == NULL) {
     printf("Error opening fd as fp\n");
     //fclose(fp);
