@@ -312,18 +312,20 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
       return 1;
     }
 
+    size_t sizeOfCharStruct = 1208;
+    sizeOfCharStruct += sizeof(ItemCarried)*&arr[i].inventorySize;
       // Write the Character struct
-    if (fwrite(&arr[i], sizeof(struct Character), 1, fp) != 1) {
+    if (fwrite(&arr[i], sizeOfCharStruct, 1, fp) != 1) {
         fclose(fp);
         return 1;
     }
 
-      // Write the associated ItemCarried data based on inventorySize
-    if (fwrite(arr[i].inventory, sizeof(struct ItemCarried), arr[i].inventorySize, fp) != arr[i].inventorySize) {
-        fclose(fp);
-        return 1;
-    }
-  }
+  //     // Write the associated ItemCarried data based on inventorySize
+  //   if (fwrite(arr[i].inventory, sizeof(struct ItemCarried), arr[i].inventorySize, fp) != arr[i].inventorySize) {
+  //       fclose(fp);
+  //       return 1;
+  //   }
+  // }
 
   fflush(fp);
   fclose(fp);
@@ -665,17 +667,17 @@ int main(int argc, char *argv[]){
   .profession = "inn-keeper", //DEFAULT_BUFFER_SIZE = 512
   .name = "Edgar Crawford", //DEFAULT_BUFFER_SIZE = 512
   .inventorySize = 0, //64bit
-  //.inventory = NULL
-} };
+//   .inventory = NULL
+// } };
 
 //FIXME: works with empty inventory
-// .inventorySize = 1, //64bit
-//   .inventory = {
-//     { .itemID = 200648657395984580, //64bit
-//       .quantity = 1 //64bit
-//     }
-//   }
-// } };
+.inventorySize = 1, //64bit
+  .inventory = {
+    { .itemID = 200648657395984580, //64bit
+      .quantity = 1 //64bit
+    }
+  }
+} };
 
     size_t nmembSAVECHAR = sizeof(arr) / sizeof(arr[0]);
 
@@ -721,7 +723,6 @@ printf("c\n");
 
   // following the metadata should be our struct
   struct Character Aactual_read_item = { 0 };
-  printf("size of arr[0]: %ld\n", sizeof(arr[0]));
   memcpy(&Aactual_read_item, Afile_conts + sizeof(uint64_t), sizeof(arr[0]));
   //assert(Aactual_read_item == arr[0]); //"size of written metadata should be as expected"
 
