@@ -292,11 +292,11 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 
   fp = fdopen(fd, "w");
   if (fp == NULL) {
-    printf("Error opening fd as fp\n");
+    //printf("Error opening fd as fp\n");
     fclose(fp);
     return 1;
   }
-printf("aaaaaaaaaaaaaaaa\n");
+//printf("aaaaaaaaaaaaaaaa\n");
   //TODO: 
   size_t sizeOfArr = 0;
   size_t characters_written = 0;
@@ -305,16 +305,16 @@ printf("aaaaaaaaaaaaaaaa\n");
   
   size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
   if (header_written != 1) {
-    printf("Failed to write header\n");
+    //printf("Failed to write header\n");
     fclose(fp);
   return 1;
   }
-  if (header_written ==1 ) {
-    printf("header written worked\n");
-  }
+  // if (header_written ==1 ) {
+  //   //printf("header written worked\n");
+  // }
 
 
-  printf("dddddddddddddddddddddd\n");
+ // printf("dddddddddddddddddddddd\n");
   //FIXME: this is where the seg fault occurs
   int res = fseek(fp, sizeof(uint64_t), SEEK_SET);
   if (res != 0){
@@ -322,7 +322,7 @@ printf("aaaaaaaaaaaaaaaa\n");
     printf("fseek failed --> closing fp \n");
     return 1;
   }
-printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
+//printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
 
 for (size_t i = 0; i < nmemb; i++) {
     //FIXME:
@@ -334,7 +334,7 @@ for (size_t i = 0; i < nmemb; i++) {
     //   printf("Error: invlaid character detected");
     //   return 1;
     // }
-    printf("bbbbbbbbbbbbbbbbb\n");
+    //printf("bbbbbbbbbbbbbbbbb\n");
     size_t charStructSize = sizeof(uint64_t) + sizeof(uint8_t) + DEFAULT_BUFFER_SIZE + DEFAULT_BUFFER_SIZE + sizeof(uint64_t);
     charStructSize += arr[i].inventorySize * (sizeof(uint64_t) * 2);
     sizeOfArr += charStructSize;
@@ -607,11 +607,23 @@ int main(int argc, char *argv[]){
 
   //SAVECHARACTER
 
-    struct Character arr[] = {
-        {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
-        {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
-        // Add more characters as needed
-    };
+    // struct Character arr[] = {
+    //     {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
+    //     {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
+    //     // Add more characters as needed
+    // };
+    struct Character arr[] = { {
+  .characterID = 1,
+  .socialClass = MERCHANT,
+  .profession = "inn-keeper",
+  .name = "Edgar Crawford",
+  .inventorySize = 1,
+  .inventory = {
+    { .itemID = 200648657395984580,
+      .quantity = 1
+    }
+  }
+} };
 
     size_t nmembSAVECHAR = sizeof(arr) / sizeof(arr[0]);
 
