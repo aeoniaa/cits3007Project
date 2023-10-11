@@ -424,7 +424,7 @@ int secureLoad(const char *filepath) {
 
 
 
-  int fd = open(filepath, "O_RDONLY");
+  int fd = open(filepath, O_RDONLY);
   if (fd == -1) {
     close(fd);
     return 1;
