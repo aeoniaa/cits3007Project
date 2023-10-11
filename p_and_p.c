@@ -65,7 +65,6 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   
   if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
     fclose(fp);
-    //printf("a\n");
     return 1;
   }
 
@@ -82,16 +81,9 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   }
 
 
-// int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const char* filename) {
-//   return 0;
-//   //the same as saveItemDetails but uses filename parameter.
-//   //not required to implement, but may be useful for testing
-//     FILE *ofp = fopen(filename, "wb");
-//   if (ofp == NULL) {
-//     perror("Error opening file");
-//     exit(EXIT_FAILURE);
-//   }
-// }
+int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const char* filename); {
+  return 0;
+}
 
 /**
  * @brief 
@@ -116,17 +108,14 @@ int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
 
     //file header: Number of items: a 64-bit unsigned integer indicating the number of ItemDetails structs that follow in the file.
     //ItemDetails: 64bit int ID + 512byte Name buffer + 512byte Desc buffer
-
-    // //TODO: fflush()
-    //fclose(fp);
-
     
     //return 1 if error occurs. No memory should be allocated (allocated memory freed)
 
+    //TODO: add validation
 
     // Read the number of records (nmemb) from the file header
     if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
-        perror("Failed to read the header"); //TODO: get rid of perror(). do dif error handling
+        //perror("Failed to read the header"); //TODO: get rid of perror(). do dif error handling
         return 1;
     }
 
@@ -134,20 +123,26 @@ int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
     *ptr = (struct ItemDetails*)malloc(sizeof(struct ItemDetails) * (*nmemb));
 
     if (*ptr == NULL) {
-        perror("Memory allocation failed"); //TODO: get rid of perror(). do dif error handling
+        //perror("Memory allocation failed"); //TODO: get rid of perror(). do dif error handling
         return 1;
     }
 
     //TODO: possibly need to fseek here to 64bits in.
     // Read the records from the file and store them in the allocated memory
     if (read(fd, *ptr, sizeof(struct ItemDetails) * (*nmemb)) != sizeof(struct ItemDetails) * (*nmemb)) {
-        perror("Failed to read item details"); //TODO: get rid of perror(). do dif error handling
+        //perror("Failed to read item details"); //TODO: get rid of perror(). do dif error handling
         free(*ptr); // Free the allocated memory in case of an error
         return 1;
     }
 
-    fsync(fd); // no called correctly //TODO:  error handling
-    //close(fd); //""
+    for (size_t i = 0; i < *nmemb; i++) {
+      if (!isValidItemDetails(&(*ptr)[i])) {
+          free(*ptr);
+          return 1;
+      }
+    }
+
+    fsync(fd);
     return 0; // Success
     //TODO: incorporate validation functions into this function where applicable. return an error if encounter an invalid struct or file record.
 
@@ -425,9 +420,6 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 //   fclose(fp);
 // printf("hhhhhhhhhhhhhhhhhhh\n");
 //   return 0;
-
-
-//TODO: validation
 
 //SHOULD BEHAVE AS ITEM DETAILS DOES
 //FIXME: NO TESTS AVAILABLE
