@@ -495,7 +495,7 @@ int main(int argc, char *argv[]){
     int saveItemfd = fileno(ofp);
     assert(saveItemfd != -1);
 
-    int res = saveItemDetails(itemArr, itemArr_size, saveItemfd);
+    res = saveItemDetails(itemArr, itemArr_size, saveItemfd);
     assert(res == 0);
     fclose(ofp);
 
