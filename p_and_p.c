@@ -659,7 +659,7 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
   assert(res == 0);
   printf("b\n");
 
-  for (char i = 0; i < Afile_size; i++){
+  for (size_t i = 0; i < Afile_size; i++){
     printf("%c", Afile_conts[i]);
   }
 
