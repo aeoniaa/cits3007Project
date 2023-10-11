@@ -671,7 +671,7 @@ printf("c\n");
 
   //  // following the metadata should be our struct
   struct Character Aactual_read_item = { 0 };
-  memcpy(&Aactual_read_item, Afile_conts + sizeof(size_t), sizeof(arr[0]));
+  memcpy(&Aactual_read_item, Afile_conts, sizeof(size_t) + sizeof(arr[0]));
   // //assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected"
 printf("b\n");
 
