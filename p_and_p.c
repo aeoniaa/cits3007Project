@@ -502,7 +502,7 @@ int open_with_fileno(const char * infile_path) {
 void assert_itemDetails_are_equal(const struct ItemDetails *id1, const struct ItemDetails *id2) {
   assert(id1->itemID == id2->itemID); //, "ItemID for id1 and id2 should be equal");
   int res = strcmp(id1->name, id2->name);
-  //if (res == 0) printf("id1->name, id2->name");
+  if (res != 0) printf("id1->name != id2->name");
   res = strcmp(id1->desc, id2->desc);
   //if (res == 0) printf("id1->desc, id2->desc");
 }
@@ -510,7 +510,7 @@ void assert_itemDetails_are_equal(const struct ItemDetails *id1, const struct It
 void assert_characters_are_equal(const struct Character *id1, const struct Character *id2) {
   assert(id1->characterID == id2->characterID); //, "ItemID for id1 and id2 should be equal");
   int res = strcmp(id1->name, id2->name);
-  //if (res == 0) printf("id1->name ==  id2->name");
+  if (res != 0) printf("id1->name !=  id2->name");
   assert(id1->inventorySize == id2->inventorySize);
   //if (res == 0) printf("id1->desc, id2->desc");
   printf("assertCharactersEqual passed");
@@ -664,7 +664,7 @@ int main(int argc, char *argv[]){
   .profession = "inn-keeper", //DEFAULT_BUFFER_SIZE = 512
   .name = "Edgar Crawford", //DEFAULT_BUFFER_SIZE = 512
   .inventorySize = 0, //64bit
-  .inventory = { }
+  //.inventory = NULL
 } };
 
 //FIXME: works with empty inventory
