@@ -308,11 +308,11 @@ printf("aaaaaaaaaaaaaaaa\n");
     fclose(fp);
   return 1;
   }
-  if (header_written ==0 ) {
+  if (header_written ==1 ) {
     printf("header written worked\n");
   }
 
-  
+
   printf("dddddddddddddddddddddd\n");
   //FIXME: this is where the seg fault occurs
   if (fseek(fp, sizeof(uint64_t), SEEK_SET) != 0){
