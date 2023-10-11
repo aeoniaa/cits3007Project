@@ -313,7 +313,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     }
 
     size_t sizeOfCharStruct = 1208;
-    sizeOfCharStruct += sizeof(struct ItemCarried)*&arr[i].inventorySize;
+    sizeOfCharStruct += (sizeof(struct ItemCarried) * arr[i].inventorySize);
       // Write the Character struct
     if (fwrite(&arr[i], sizeOfCharStruct, 1, fp) != 1) {
         fclose(fp);
