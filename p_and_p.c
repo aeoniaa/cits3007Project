@@ -298,8 +298,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   }
 //printf("aaaaaaaaaaaaaaaa\n");
   //TODO: 
-  size_t sizeOfArr = 0;
-  size_t characters_written = 0;
+
   //Tfind char struct size of each char struct. using inventory size * number of items in inventory
   //add to runningSizeCountOfAllCharacterStructs
   
@@ -323,7 +322,8 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     return 1;
   }
 //printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
-
+  size_t sizeOfArr = 0;
+  size_t characters_written = 0;
 for (size_t i = 0; i < nmemb; i++) {
     //FIXME:
     // printf("abababa\n");
@@ -665,15 +665,15 @@ printf("c\n");
   //assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
 
    // metadata should be `1`
-  // size_t Aactual_read_metadata = 0;
-  // memcpy(&Aactual_read_metadata, Afile_conts, sizeof(size_t));
-  //assert(Aactual_read_metadata == itemArr_size); //"size of written metadata should be as expected");
+  size_t Aactual_read_metadata = 0;
+  memcpy(&Aactual_read_metadata, Afile_conts, sizeof(size_t));
+  assert(Aactual_read_metadata == nmembSAVECHAR); //"size of written metadata should be as expected");
 
-  //  // following the metadata should be our struct
+  // following the metadata should be our struct
   struct Character Aactual_read_item = { 0 };
-  memcpy(&Aactual_read_item, Afile_conts, sizeof(size_t) + sizeof(arr[0]));
-  // //assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected"
-printf("b\n");
+  memcpy(&Aactual_read_item, Afile_conts + sizeof(size_t), sizeof(arr[0]);
+  assert(actual_read_metadata == nmembSAVECHAR); //"size of written metadata should be as expected"
+printf("d\n");
 
   assert_characters_are_equal(&Aactual_read_item, &(arr[0]));
 
