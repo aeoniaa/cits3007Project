@@ -640,8 +640,8 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
   //assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
 
    // metadata should be `1`
-  size_t Aactual_read_metadata = 0;
-  memcpy(&Aactual_read_metadata, Afile_conts, sizeof(size_t));
+  // size_t Aactual_read_metadata = 0;
+  // memcpy(&Aactual_read_metadata, Afile_conts, sizeof(size_t));
   //assert(Aactual_read_metadata == itemArr_size); //"size of written metadata should be as expected");
 
   //  // following the metadata should be our struct
