@@ -663,7 +663,7 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
     printf("%c", Afile_conts[i]);
   }
 
-  FIXME: file size bad
+  //FIXME: file size bad
   const size_t Aexpected_size = sizeof(uint64_t) + sizeof(arr[0]);
 
   //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
