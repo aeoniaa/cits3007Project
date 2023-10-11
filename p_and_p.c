@@ -662,7 +662,7 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
 
 
   //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
-  printf("Afilesize: %ld\n", Afilesize);
+  printf("Afilesize: %ld\n", Afile_size);
   printf("AExpectedfilesize: %ld\n", Aexpected_size);
   assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
 printf("c\n");
