@@ -652,11 +652,15 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
 
   fclose(Aofp);
 
+  printf("a\n");
+
   res = slurp_file("tmp.dat", "rb", &Afile_conts, &Afile_size);
   assert(res == 0);
+  printf("b\n");
 
   const size_t Aexpected_size = sizeof(uint64_t) + sizeof(arr[0]) + sizeof(arr[1]);
 
+printf("c\n");
   //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
   //assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
 
@@ -669,9 +673,11 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
   struct Character Aactual_read_item = { 0 };
   memcpy(&Aactual_read_item, Afile_conts + sizeof(size_t), sizeof(arr[0]));
   // //assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected"
+printf("b\n");
 
   assert_characters_are_equal(&Aactual_read_item, &(arr[0]));
 
+printf("e\n");
   if (Afile_conts != NULL)
     free(Afile_conts);
   }
