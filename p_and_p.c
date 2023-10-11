@@ -45,16 +45,11 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
 
   for (size_t i = 0; i < nmemb; i++) {
     int res = isValidItemDetails(&arr[i]);
-    //printf("Item details %s is valid\n", arr[i].name);
     if (res != 1) {
       fclose(fp);
       //printf("Error: invlaid item details detected");
       return 1;
     }
-  //   printf("Item %zu:\n", i + 1);
-  //   printf("\tItem ID: %lu\n", arr[i].itemID);
-  //   printf("\tName: %s\n", arr[i].name);
-  //   printf("\tDescription: %s\n", arr[i].desc);
   }
 
   size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
@@ -113,22 +108,21 @@ int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
 
     // Read the number of records (nmemb) from the file header
     if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
-        //perror("Failed to read the header"); //TODO: get rid of perror(). do dif error handling
+        //perror("Failed to read the header"); 
         return 1;
     }
 
     // Allocate memory for the records
     *ptr = (struct ItemDetails*)malloc(sizeof(struct ItemDetails) * (*nmemb));
-
     if (*ptr == NULL) {
-        //perror("Memory allocation failed"); //TODO: get rid of perror(). do dif error handling
+        //perror("Memory allocation failed");
         return 1;
     }
 
     //TODO: possibly need to fseek here to 64bits in.
     // Read the records from the file and store them in the allocated memory
     if (read(fd, *ptr, sizeof(struct ItemDetails) * (*nmemb)) != sizeof(struct ItemDetails) * (*nmemb)) {
-        //perror("Failed to read item details"); //TODO: get rid of perror(). do dif error handling
+        //perror("Failed to read item details"); 
         free(*ptr); // Free the allocated memory in case of an error
         return 1;
     }
@@ -142,8 +136,6 @@ int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
 
     fsync(fd);
     return 0; // Success
-    //TODO: incorporate validation functions into this function where applicable. return an error if encounter an invalid struct or file record.
-
 }
 
 /**
@@ -328,96 +320,6 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   return 0;
 
 }
-// //PREVIOUSVERSION
-//   FILE *fp;
-//
-//   fp = fdopen(fd, "w");
-//   if (fp == NULL) {
-//     //printf("Error opening fd as fp\n");
-//     fclose(fp);
-//     return 1;
-//   }
-// //printf("aaaaaaaaaaaaaaaa\n");
-//   //TODO: 
-//
-//   //Tfind char struct size of each char struct. using inventory size * number of items in inventory
-//   //add to runningSizeCountOfAllCharacterStructs
-//
-//   size_t header_written = fwrite(&nmemb, sizeof(nmemb), 1, fp);
-//   if (header_written != 1) {
-//     //printf("Failed to write header\n");
-//     fclose(fp);
-//   return 1;
-//   }
-//   // if (header_written ==1 ) {
-//   //   //printf("header written worked\n");
-//   // }
-//
-//
-//  // printf("dddddddddddddddddddddd\n");
-//   //FIXME: this is where the seg fault occurs
-//   int res = fseek(fp, sizeof(uint64_t), SEEK_SET);
-//   if (res != 0){
-//     fclose(fp);
-//     printf("fseek failed --> closing fp \n");
-//     return 1;
-//   }
-// //printf("eeeeeeeeeeeeeeeeeeeeeeeeeeee\n");
-//   size_t sizeOfArr = 0;
-//   size_t characters_written = 0;
-// for (size_t i = 0; i < nmemb; i++) {
-//     //FIXME:
-//     // printf("abababa\n");
-//     // int res = isValidCharacter(&arr[i]);
-//     // printf("Character %s is valid\n", arr[i].name);
-//     // if (res != 1) {
-//     //   fclose(fp);
-//     //   printf("Error: invlaid character detected");
-//     //   return 1;
-//     // }
-//     //printf("bbbbbbbbbbbbbbbbb\n");
-//     //FIXME: THIS IS THE PROBLEM: Size of character array incoming not calculated properly
-//     size_t charStructSize = sizeof(uint64_t) + sizeof(uint8_t) + DEFAULT_BUFFER_SIZE + DEFAULT_BUFFER_SIZE + sizeof(uint64_t);
-//     charStructSize += arr[i].inventorySize * (sizeof(uint64_t) * 2);
-//     sizeOfArr += charStructSize;
-//     printf("Item %zu:\n", i + 1);
-//     printf("\tCharacter ID: %ld\n", arr[i].characterID);
-//     printf("\tSocialClass: %d\n", arr[i].socialClass);
-//     printf("\tProfession: %s\n", arr[i].profession);
-//     printf("\tName: %s\n", arr[i].name);
-//     printf("\tInventorySize: %ld\n", arr[i].inventorySize);
-//
-//     printf("size of char struct: %ld\n", charStructSize);
-//     size_t els_written = 0;
-//     els_written = fwrite(arr, charStructSize, 1, fp);
-//     if (els_written != 1) {
-//       fclose(fp);
-//       printf("els_written failed --> closing fp \n");
-//     return 1;
-//     }
-//     characters_written += 1;
-//   }
-//   printf("size of char struct: %ld\n", sizeOfArr);
-//   if (characters_written != nmemb) {
-//       fclose(fp);
-//       printf("characters_written failed , wrote %ld, instead of %ld characters--> closing fp \n", characters_written, nmemb);
-//     return 1;
-//   }
-//   //printf("ccccccccccccccc\n");
-// 
-//   //TODO: NEED TO WRITE EACH MEMBER INDIVIDUALLY ACCORDING TO ITS SIZE
-//   // els_written = fwrite(arr, sizeOfArr, nmemb, fp);
-//   // if (els_written != nmemb) {
-//   //   fclose(fp);
-//   //   printf("els_written failed --> closing fp \n");
-//   // return 1;
-//   // }
-// //printf("ffffffffffffffffffffffffffffff\n");
-//   fflush(fp);
-// //printf("ggggggggggggggggggggggggggg\n");
-//   fclose(fp);
-// printf("hhhhhhhhhhhhhhhhhhh\n");
-//   return 0;
 
 //SHOULD BEHAVE AS ITEM DETAILS DOES
 //FIXME: NO TESTS AVAILABLE
@@ -448,9 +350,8 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
         return 1;
     }
 
-    return 0; // Success
-    // //TODO: fflush()
-    //fclose(fp);
+    fsync(fd);
+    return 0;
 }
     //TODO: possibly need to fseek here to 64bits in.
 
@@ -567,39 +468,17 @@ int main(int argc, char *argv[]){
   printf("hello world\n");
 
 //from check.ts loadItemDetails
-  // const char * infile_path = "test-data/items001.dat";
-  // int item001fd = open_with_fileno(infile_path);
-  // printf("opened file\n");
-  //
-  //
-  // size_t numItems = 0;
-  // struct ItemDetails * itemsArr = NULL;
-  // int res = loadItemDetails(&itemsArr, &numItems, item001fd);
-  //
-  // printf("res of loadItemDetails: %d\n", res);
-  // printf("numItems (modified by loadItemDetails() ): %ld\n", numItems);
-
-//my loadItemDetails
-    // // Sample usage of loadItemDetails
-    // int fd = open("your_file.dat", O_RDONLY); // Open the file for reading
-    // if (fd == -1) {
-    //     perror("Failed to open the file");
-    //     return 1;
-    // }
-    // struct ItemDetails* loadedItems = NULL;
-    // size_t numItems = 0;
-    // 
-    // if (loadItemDetails(&loadedItems, &numItems, fd) != 0) {
-    //     fprintf(stderr, "Error: Failed to load item details\n");
-    //     return 1;
-    // }
-    // if (loadItemDetails(&loadedItems, &numItems,
-    // // Now you have the loadedItems array with numItems elements
-    //
-    // // Remember to free the allocated memory when you're done with it
-    // free(loadedItems);
-    //
-    // return 0;
+  const char * infile_path = "test-data/items001.dat";
+  int item001fd = open_with_fileno(infile_path);
+  printf("opened file\n");
+  
+  
+  size_t numItems = 0;
+  struct ItemDetails * loaditemsArr = NULL;
+  int res = loadItemDetails(&loaditemsArr, &numItems, item001fd);
+  if (res != 0) {return 1;}
+  printf("numItems (modified by loadItemDetails() ): %ld\n", numItems);
+  free(loaditemsArr);
 
 
   //SAVE ITEM DETAILS CHECKS
@@ -706,9 +585,6 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
   printf("AExpectedfilesize: %ld\n", Aexpected_size);
   assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
 
-
-  //CAN I PRINT OUT FILE_CONTS???
-printf("c\n");
    // metadata should be `1`
   size_t Aactual_read_metadata = 0;
   memcpy(&Aactual_read_metadata, Afile_conts, sizeof(uint64_t));
@@ -719,74 +595,9 @@ printf("c\n");
   memcpy(&Aactual_read_item, Afile_conts + sizeof(uint64_t), sizeof(arr[0]));
   //assert(Aactual_read_item == arr[0]); //"size of written metadata should be as expected"
 
-  printf("d\n");
-
   assert_characters_are_equal(&Aactual_read_item, &(arr[0]));
 
-  printf("e\n");
   if (Afile_conts != NULL){
     free(Afile_conts);
   }
-
-
-//FROM CHATGPT TESTING
-    // // Create an array of Character structures
-    // struct Character characters[2];
-
-    // // Initialize character data
-    // characters[0].characterID = 1;
-    // characters[0].socialClass = MERCHANT;
-    // strcpy(characters[0].profession, "Merchant");
-    // strcpy(characters[0].name, "John Doe");
-    // characters[0].inventorySize = 2;
-    // characters[0].inventory[0].itemID = 101;
-    // characters[0].inventory[0].quantity = 3;
-    // characters[0].inventory[1].itemID = 102;
-    // characters[0].inventory[1].quantity = 5;
-
-    // characters[1].characterID = 2;
-    // characters[1].socialClass = LABOURER;
-    // strcpy(characters[1].profession, "Labourer");
-    // strcpy(characters[1].name, "Jane Smith");
-    // characters[1].inventorySize = 1;
-    // characters[1].inventory[0].itemID = 201;
-    // characters[1].inventory[0].quantity = 8;
-
-    // // Save the Character data to a binary file
-    // FILE *fp = fopen("tmp.dat", "wb");
-    // if (fp == NULL) {
-    //     perror("Failed to create file");
-    //     return 1;
-    // }
-
-    // if (saveCharacters(characters, 2, fileno(fp)) != 0) {
-    //     perror("Failed to save characters");
-    //     return 1;
-    // }
-
-    // close(fp);
-
-    // // Read the data back from the file to verify correctness
-    // struct Character loadedCharacters[2];
-    // fp = fopen("tmp.dat", "r");
-    // if (fp == NULL) {
-    //     perror("Failed to open file for reading");
-    //     return 1;
-    // }
-
-    // if (read(fd, loadedCharacters, sizeof(loadedCharacters)) != sizeof(loadedCharacters)) {
-    //     perror("Failed to read characters from file");
-    //     return 1;
-    // }
-
-    // close(fd);
-
-    // // Compare the loaded data with the original data
-    // if (memcmp(characters, loadedCharacters, sizeof(characters)) == 0) {
-    //     printf("Character data successfully saved and loaded.\n");
-    // } else {
-    //     printf("Character data mismatch after loading.\n");
-    // }
-
-    // return 0;
 }
