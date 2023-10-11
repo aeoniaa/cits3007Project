@@ -658,23 +658,24 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
   assert(res == 0);
   printf("b\n");
 
-  const size_t Aexpected_size = sizeof(uint64_t) + sizeof(arr[0]) + sizeof(arr[1]);
+  const size_t Aexpected_size = sizeof(uint64_t) + sizeof(arr[0]);
 
+
+  fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
+  assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
 printf("c\n");
-  //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
-  //assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
-
    // metadata should be `1`
   size_t Aactual_read_metadata = 0;
-  memcpy(&Aactual_read_metadata, Afile_conts, sizeof(size_t));
+  memcpy(&Aactual_read_metadata, Afile_conts, sizeof(uint64_t));
   assert(Aactual_read_metadata == nmembSAVECHAR); //"size of written metadata should be as expected");
 
   // following the metadata should be our struct
   struct Character Aactual_read_item = { 0 };
   printf("size of arr[0]: %ld\n", sizeof(arr[0]));
-  memcpy(&Aactual_read_item, Afile_conts, sizeof(arr[0])  + sizeof(size_t));
-  assert(actual_read_metadata == nmembSAVECHAR); //"size of written metadata should be as expected"
-printf("d\n");
+  memcpy(&Aactual_read_item, Afile_conts + sizeof(uint64_t), sizeof(arr[0]));
+  //assert(Aactual_read_item == arr[0]); //"size of written metadata should be as expected"
+
+  printf("d\n");
 
   assert_characters_are_equal(&Aactual_read_item, &(arr[0]));
 
