@@ -361,7 +361,7 @@ for (size_t i = 0; i < nmemb; i++) {
       printf("characters_written failed , wrote %ld, instead of %ld characters--> closing fp \n", characters_written, nmemb);
     return 1;
   }
-  printf("ccccccccccccccc\n");
+  //printf("ccccccccccccccc\n");
   
   //TODO: NEED TO WRITE EACH MEMBER INDIVIDUALLY ACCORDING TO ITS SIZE
   // els_written = fwrite(arr, sizeOfArr, nmemb, fp);
@@ -370,9 +370,9 @@ for (size_t i = 0; i < nmemb; i++) {
   //   printf("els_written failed --> closing fp \n");
   // return 1;
   // }
-printf("ffffffffffffffffffffffffffffff\n");
+//printf("ffffffffffffffffffffffffffffff\n");
   fflush(fp);
-printf("ggggggggggggggggggggggggggg\n");
+//printf("ggggggggggggggggggggggggggg\n");
   fclose(fp);
 printf("hhhhhhhhhhhhhhhhhhh\n");
   return 0;
@@ -458,6 +458,14 @@ void assert_itemDetails_are_equal(const struct ItemDetails *id1, const struct It
   int res = strcmp(id1->name, id2->name);
   //if (res == 0) printf("id1->name, id2->name");
   res = strcmp(id1->desc, id2->desc);
+  //if (res == 0) printf("id1->desc, id2->desc");
+}
+
+void assert_characters_are_equal(const struct Character *id1, const struct Character *id2) {
+  assert(id1->characterID == id2->characterID); //, "ItemID for id1 and id2 should be equal");
+  int res = strcmp(id1->name, id2->name);
+  //if (res == 0) printf("id1->name, id2->name");
+  res = strcmp(id1->inventorySize, id2->inventorySize);
   //if (res == 0) printf("id1->desc, id2->desc");
 }
 
@@ -661,7 +669,7 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
   // memcpy(&actual_read_item, file_conts + sizeof(size_t), sizeof(struct ItemDetails));
   // //assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected"
 
-  // assert_itemDetails_are_equal(&actual_read_item, &(itemArr[0]));
+  assert_characters_are_equal(&actual_read_item, &(arr[0]));
 
   if (Afile_conts != NULL)
     free(Afile_conts);
