@@ -622,7 +622,7 @@ int main(int argc, char *argv[]){
   int saveCharfd = fileno(Aofp);
   assert(saveCharfd != -1);
 
-if (saveCharacters(arr, nmembSAVECHAR, fileno(stdout)) != 0) {
+if (saveCharacters(arr, nmembSAVECHAR, fileno(Aofp)) != 0) {
         fprintf(stderr, "Error: Failed to save characters\n");
         return 1;
     }
