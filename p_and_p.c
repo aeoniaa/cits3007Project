@@ -2,6 +2,17 @@
 //TODO: no use of strcpy or strlen as they read past the buffer size DEFAULT_BUFFER_SIZE-1
 //could use <read> func from <unistd.h> to read struct from file using fd ssize_tread(intfd, void*buf, size_tcount); -->   structMyStructmyStruct; ssize_tres = read(fd, &myStruct, sizeof(structMyStruct));
 //fp to fd --> fdopen and fileno
+
+/**
+ * @file p_and_p.c
+ * @author Brigitte Gredziuk 23460936
+ * @date 2023
+ * @brief File containing functions for CITS3007 Secure Coding Project.
+ * 
+ * Contains functions saveItemDetails, loadItemDetails, saveCharacter, loadCharacter, 
+ * and validation functions for what defines a 'name', 'multiword', and the structs ItemDetails and Character.
+ */
+
 #define _POSIX_C_SOURCE 200809L
 #define _GNU_SOURCE
 
@@ -17,10 +28,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
-#include <sys/mman.h>
-#include <assert.h>
-#include <check.h>
-
+#include <assert.h> //TODO: delete before submittion
+#include <check.h> //TODO: delete before submittion
 
 
 /**
@@ -354,7 +363,6 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
     return 0;
 }
     //TODO: possibly need to fseek here to 64bits in.
-
 
 //FIXME: DO THIS!!!
 int secureLoad(const char *filepath) {
