@@ -292,7 +292,8 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 
   fp = fdopen(fd, "w+");
   if (fp == NULL) {
-    fclose(fp);
+    printf("Error opening fd as fp\n");
+    //fclose(fp);
     return 1;
   }
 printf("aaaaaaaaaaaaaaaa\n");
@@ -622,7 +623,7 @@ int main(int argc, char *argv[]){
   int saveCharfd = fileno(Aofp);
   assert(saveCharfd != -1);
 
-if (saveCharacters(arr, nmembSAVECHAR, fileno(Aofp)) != 0) {
+if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
         fprintf(stderr, "Error: Failed to save characters\n");
         return 1;
     }
