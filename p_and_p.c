@@ -9,7 +9,7 @@
  * @date 2023
  * @brief File containing functions for CITS3007 Secure Coding Project.
  * 
- * Contains functions saveItemDetails, loadItemDetails, saveCharacter, loadCharacter, 
+ * Contains functions for saveItemDetails, loadItemDetails, saveCharacter, loadCharacter, 
  * and validation functions for what defines a 'name', 'multiword', and the structs ItemDetails and Character.
  */
 
@@ -26,20 +26,27 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <pwd.h>
+#include <grp.h>
 #include <assert.h> //TODO: delete before submittion
 #include <check.h> //TODO: delete before submittion
 
 
+
 /**
- * serializes an array of ItemDetails structs
- * ItemDets.dat file format: 64-bit unsigned integer indicating number of ItemDetails structs to follow in the file 
- * followed by multiple ItemDetails struct: itemID(64bit unsigned integer) + itemName(DEFAULT_BUFFER_SIZE 512) + itemDesc(DEFAULT_BUFFER_SIZE 512)
- * validates each ItemDetails struct attempted to be written is valid. If not, stop, close file and return 1 (error)
- * //TODO: pre-conditions
- * \param arr
- * \param nmemb
- * \param fd
- * \return 1 if error, 0 otherwise
+ * @brief Serializes an array of @c ItemDetails structs
+ * 
+ * Takes a pointer to an array of @c ItemDetails structs, the number of structs in the array to be serialized, 
+ * and the file descriptor for the serialisation destination. Saves the array in the ItemDetails file format,  
+ * starting with a 64-bit unsigned integer @p nmemb indicating number of @c ItemDetails structs serialized. 
+ * Before serialization, each @c ItemDetails struct to be added is validated using @c isValidItemDetails() function.
+ * If an invalid @c ItemDetails struct is found, the function stops and returns 1 without serialization occurring.
+ * @param arr Pointer to a series of @c ItemDetails structs to be saved
+ * @param nmemb Number of @c ItemDetails structs held in @p arr to be saved
+ * @param fd File descriptor of the file data will be serialized to.
+ * @return 1 if error occurs during serialization. On success, returns 0.
+ * @note It is up to the caller to ensure the number of ItemDetails structs in @p arr is reflected in @p nmemb, otherwise this function is not guaranteed to work accurately.
 */
 int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   FILE *fp;
@@ -86,69 +93,54 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
 int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const char* filename);
 
 /**
- * @brief 
- * On success, this function allocates enough memory to store the number of records contained in the file
- * The address to the allocated memory is written to ptr.
- * The memory allocated in this function is to be freed by the caller.
- * All records contained in the file are written into the memory allocated
- * Does not close fd. 
- * @param ptr the address of a pointer-to-ItemDetails struct, points to the memory with the ItemDetails structs loaded
- * @param nmemb the address of a size_t, the number of items loaded from file
- * @param fd file being deserialized
- * @return 1 if error occurs. No memory will be allocated. On success, return 0.
+ * @brief Deserialises an array of @c ItemDetails structs.
+ * 
+ * This function takes a file descriptor @p fd of the file to be deserialized, writes the number of structs deserialized to @p nmemb,
+ * and writes the @c ItemDetails structs into @p ptr. On success, this function allocates enough memory to store the number of records
+ * contained in the file @p fd. On failure, this memory is not allocated (freed). This memory is allocated to @p ptr
+ * The address to the allocated memory is written to @p ptr. From @p fd, the header containing the number of @c ItemDetails structs to be 
+ * loaded is written to @p nmemb, and the structs are written to @p ptr. 
+ * @param ptr Address of a pointer-to-ItemDetails structwhich points to the memory where the @c ItemDetails structs are written.
+ * @param nmemb Address of a size_t containing the number of @c ItemDetails structs loaded from file @p fd.
+ * @param fd Pointer to a file of ItemDetails file format.
+ * @return 1 if error occurs during deserialization. On success, returns 0.
+ * @note The memory allocated to @p ptr in this function is to be freed by the caller.
 */
 int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
-    //read header for number of items to load --> write num or records to nmemb
-    //allocate memory for amount of items
-    //write records to that memory
-    //ptr = pointer to that memory 
-    //nmemb = number of itemDetail structs to be loaded
-
-    //fread() to read info from a struct
-
-    //file header: Number of items: a 64-bit unsigned integer indicating the number of ItemDetails structs that follow in the file.
-    //ItemDetails: 64bit int ID + 512byte Name buffer + 512byte Desc buffer
-    
-    //return 1 if error occurs. No memory should be allocated (allocated memory freed)
-
-    //TODO: add validation
-
-    // Read the number of records (nmemb) from the file header
     if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
-        //perror("Failed to read the header"); 
         return 1;
     }
 
     // Allocate memory for the records
     *ptr = (struct ItemDetails*)malloc(sizeof(struct ItemDetails) * (*nmemb));
     if (*ptr == NULL) {
-        //perror("Memory allocation failed");
-        return 1;
+      free(*ptr);
+      return 1;
     }
 
     //TODO: possibly need to fseek here to 64bits in.
-    // Read the records from the file and store them in the allocated memory
     if (read(fd, *ptr, sizeof(struct ItemDetails) * (*nmemb)) != sizeof(struct ItemDetails) * (*nmemb)) {
-        //perror("Failed to read item details"); 
-        free(*ptr); // Free the allocated memory in case of an error
-        return 1;
+      free(*ptr); 
+      return 1;
     }
 
     for (size_t i = 0; i < *nmemb; i++) {
       if (!isValidItemDetails(&(*ptr)[i])) {
-          free(*ptr);
-          return 1;
+        free(*ptr);
+        return 1;
       }
     }
 
     fsync(fd);
-    return 0; // Success
+    return 0;
 }
 
 /**
  * @brief Checks if string is a valid name field
- * A valid name has graphical representation, with no other characters permitted.
- * Must be max length DEFAULT_BUFFER_SIZE.
+ * 
+ * A valid name has graphical representation, with no other characters permitted including whitespace and control characters.
+ * To be valid, a string must be max length DEFAULT_BUFFER_SIZE, with the block containing a NUL terminated string of length at most DEFAULT_BUFFER_SIZE-1.
+ * @param str The string to be validated.
  * @return 1 if valid, 0 otherwise
 */
 int isValidName(const char *str) {
@@ -174,6 +166,11 @@ int isValidName(const char *str) {
 
 /**
  * @brief Checks if string is a valid multi-word field
+ * 
+ * A valid multi-word field can have a graphical representation, but may also contain space characters so long as the space characters
+ * are not at the beginning or end of the string.  * To be valid, a string must be max length DEFAULT_BUFFER_SIZE, with the block 
+ * containing a NUL terminated string of length at most DEFAULT_BUFFER_SIZE-1.
+ * @param str The string to be validated.
  * @return 1 if valid, 0 otherwise
 */
 int isValidMultiword(const char *str) {
@@ -202,6 +199,12 @@ int isValidMultiword(const char *str) {
 
 /**
  * @brief Checks if an ItemDetails struct is valid
+ * 
+ * A valid ItemDetails struct consists of a 64-bit unsigned integer as the @c itemID, the item's unique identifier; a block of characters size 
+ * DEFAULT_BUFFER_SIZE containing a @c name-field as defined in @c isValidName() representing the @c itemName; and a block of characters size 
+ * DEFAULT_BUFFER_SIZE containing a @c name-field as defined in @c isValidMultiword() representing the @c itemDesc;
+ * To be valid, neither @c itemName nor @c itemDesc should be empty strings.
+ * @param id The ItemDetails struct to be validated.
  * @return 1 if valid, 0 otherwise
 */
 int isValidItemDetails(const struct ItemDetails *id) {
@@ -226,6 +229,16 @@ int isValidItemDetails(const struct ItemDetails *id) {
 
 /**
  * @brief Checks if a Character struct is valid
+ * 
+ * A valid Character struct consists of a 64-bit unsigned integer as the @c characterID; an 8-bit unsigned integer as the @c socialClass 
+ * specifiying a member of the @c CharacterSocialClass enum; a block of characters size DEFAULT_BUFFER_SIZE containing a @c name-field 
+ * as defined in @c isValidName() representing the @c profession; a block of characters size DEFAULT_BUFFER_SIZE containing a @c name-field 
+ * as defined in @c isValidMultiword() representing the @c name; and a 64-bit unsigned integer indicating the number of items carried by the 
+ * character @c inventorySize less than or equal to @c MAX_ITEMS. The inventory of the character is held in @c inventory array containing 
+ * 
+ * @c ItemCarried structs. A valid character must contain maximum MAX_ITEMS in total across all items carried quantity; and an amount of 
+ * @c ItemCarried structs equal to @c inventorySize. Furthermore, to be valid, neither @c profession nor @c name should be empty strings.
+ * @param c The Character struct to be validated
  * @return 1 if valid, 0 otherwise
 */
 int isValidCharacter(const struct Character * c) {
@@ -260,27 +273,23 @@ int isValidCharacter(const struct Character * c) {
   return 1;
 }
 
-//SHOULD BEHAVE AS ITEM DETAILS   DOES
+
+/**
+ * @brief Serializes an array of @c Character structs
+ * 
+ * Takes a pointer to an array of @c Character structs, the number of structs in the array to be serialized, 
+ * and the file descriptor for the serialisation destination. Saves the array in the Character file format,  
+ * starting with a 64-bit unsigned integer @p nmemb indicating number of @c Character structs serialized. 
+ * Before serialization, each @c Character struct to be added is validated using @c isValidCharacter() function.
+ * If an invalid @c Character struct is found, the function stops and returns 1 without serialization occurring.
+ * @param arr Pointer to a series of @c Character structs to be saved
+ * @param nmemb Number of @c Character structs held in @p arr to be saved
+ * @param fd File descriptor of the file data will be serialized to.
+ * @return 1 if error occurs during serialization. On success, returns 0.
+ * @note It is up to the caller to ensure the number of Character structs in @p arr is reflected in @p nmemb, otherwise this function is not guaranteed to work accurately.
+*/
 //FIXME:SEGMENTATION　FAULT
 int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
-    //Full marks only needs functions that work with known valid files
-    // Character struct --> the inventorySize says how many records are in the items carried array
-    // When reading from file you need to know how much memory you are reading, its variable depending on inventory size
-  
-    //TODO: fwrite characters struct
-    
-    //Header = 64-bit unsigned int indicating number of Character structs stored in the file, and total number of character to be loaded
-    //characterId = A 64-bit, unsigned integer value representing the unique identifier of the character.
-    //socialClass: An 8-bit, unsigned integer representing the character’s social class. Each value (from 0 to 4) specifies one of the enumerated members of the CharacterSocialClass enum.
-    //profession: A block of characters of length DEFAULT_BUFFER_SIZE, containing the character’s profession. This is a name field.
-    //name: A block of characters of length DEFAULT_BUFFER_SIZE, containing the character’s name. This is a multi-word field.
-    //inventorySize:  indicating the number of items carried by the character. anything beyonf is not considered part of the inventory
-    //structs amount = inventorySize
-      //itemID: A 64-bit, unsigned integer value representing the unique identifier of the item class.
-      //quantity: A 64-bit, unsigned integer value indicating the quantity of the item carried by the character.
-
-
-
   FILE *fp;
 
   fp = fdopen(fd, "wb"); 
@@ -328,7 +337,20 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 
 }
 
-//SHOULD BEHAVE AS ITEM DETAILS DOES
+/**
+ * @brief Deserialises an array of @c Character structs.
+ * 
+ * This function takes a file descriptor @p fd of the file to be deserialized, writes the number of structs deserialized to @p nmemb,
+ * and writes the @c Character structs into @p ptr. On success, this function allocates enough memory to store the number of records
+ * contained in the file @p fd. On failure, this memory is not allocated (freed). This memory is allocated to @p ptr
+ * The address to the allocated memory is written to @p ptr. From @p fd, the header containing the number of @c Character structs to be 
+ * loaded is written to @p nmemb, and the structs are written to @p ptr. 
+ * @param ptr Address of a pointer-to-Character struct which points to the memory where the @c Character structs are written.
+ * @param nmemb Address of a size_t containing the number of @c Character structs loaded from file @p fd.
+ * @param fd Pointer to a file of Character file format.
+ * @return 1 if error occurs during deserialization. On success, returns 0.
+ * @note The memory allocated to @p ptr in this function is to be freed by the caller.
+*/
 //FIXME: NO TESTS AVAILABLE
 int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
     //Size of the Character array: A 64-bit, unsigned integer value indicating the number of Character structs stored in the file. This is the total number of characters to be loaded.    
@@ -362,9 +384,68 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
 }
     //TODO: possibly need to fseek here to 64bits in.
 
+
+/**
+ * @brief
+ * TODO:
+ * 
+ * DESCRIPTION
+ * @param filepath
+ * @return 1 if an error occurs during deserialization, 2 if an error occurs while aquiring or dropping permissions, or 0 otherwise.
+=*/
 //FIXME: DO THIS!!!
 int secureLoad(const char *filepath) {
-  printf("%s\n", filepath);
+  //TODO: Check program running as setuid owned by pitchpoltadmin
+  //  //0. check the running process’s permissions to ensure that the executable it was launched from was a setUID executable owned by user pitchpoltadmin
+
+  struct passwd *user_info = getpwuid(geteuid());
+  if (user_info == NULL || strcmp(user_info->pw_name, "pitchpoltadmin") != 0) {
+    return 2; // Not running as setuid owned by pitchpoltadmin
+  }
+
+
+  //  //leave suid, thats how we go back to same privs,   //change euid
+  //1. aquire perms to open ItemDetails db (effectice userid set to userid of pitchpoltadmin. --> temp higher priv
+  //      error return 2
+
+  //TODO: SET Euid to uid of pitchpoltadmin
+  struct group *group_info = getgrnam("pitchpoltadmin");
+  if (group_info == NULL) {
+    return 2; // Group does not exist
+  }
+
+  if (setregid(group_info->gr_gid, group_info->gr_gid) != 0) {
+    return 2; // Error switching to the target group
+  }
+
+  if (setreuid(user_info->pw_uid, user_info->pw_uid) != 0) {
+    return 2; // Error switching to the target user
+  }
+
+
+
+  int fd = open(filepath, "O_RDONLY");
+  if (fd == -1) {
+    close(fd);
+    return 1;
+  }    
+
+  //TODO: PERM DROP PRIVILEGES HERE
+  //fail to drop, return 2'
+
+
+  size_t nmemb = 0;
+  struct ItemDetails * loadedItems = NULL;
+  
+  int res = loadItemDetails(&loadedItems, &nmemb, fd);
+  if (res != 0) {
+    close(fd);
+    return 1;
+  }
+
+  close(fd);
+  playGame(loadedItems, nmemb);
+  free(loadedItems);
   return 0;
   //find where to obtain ItemDetails pte and nmemb variable in order to pass into playGame()
   //setuid: secure coding cookbook, labs
@@ -380,6 +461,12 @@ int secureLoad(const char *filepath) {
   
   */
   //10 marks --> look at project spec!!!!!!
+
+
+  
+
+
+
 }
 
 void playGame(struct ItemDetails* ptr, size_t nmemb);
@@ -469,6 +556,7 @@ int slurp_file(
 }
 
 
+//AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH USE PROVIDED CHARACTER TEST FILES FOR TESTING LOAD CHARACTER
 //TODO: REMOVE BEFORE SUBMITTING
 int main(int argc, char *argv[]){
   printf("hello world\n");
