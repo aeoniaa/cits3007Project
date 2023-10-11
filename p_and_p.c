@@ -665,11 +665,11 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
   //assert(Aactual_read_metadata == itemArr_size); //"size of written metadata should be as expected");
 
   //  // following the metadata should be our struct
-  // struct ItemDetails actual_read_item = { 0 };
-  // memcpy(&actual_read_item, file_conts + sizeof(size_t), sizeof(struct ItemDetails));
+  struct Character Aactual_read_item = { 0 };
+  memcpy(&Aactual_read_item, Afile_conts + sizeof(size_t), sizeof(arr[0]);
   // //assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected"
 
-  assert_characters_are_equal(&actual_read_item, &(arr[0]));
+  assert_characters_are_equal(&Aactual_read_item, &(arr[0]));
 
   if (Afile_conts != NULL)
     free(Afile_conts);
