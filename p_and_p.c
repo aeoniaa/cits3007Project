@@ -335,6 +335,7 @@ for (size_t i = 0; i < nmemb; i++) {
     //   return 1;
     // }
     //printf("bbbbbbbbbbbbbbbbb\n");
+    //FIXME: THIS IS THE PROBLEM: Size of character array incoming not calculated properly
     size_t charStructSize = sizeof(uint64_t) + sizeof(uint8_t) + DEFAULT_BUFFER_SIZE + DEFAULT_BUFFER_SIZE + sizeof(uint64_t);
     charStructSize += arr[i].inventorySize * (sizeof(uint64_t) * 2);
     sizeOfArr += charStructSize;
@@ -622,14 +623,14 @@ int main(int argc, char *argv[]){
     //     // Add more characters as needed
     // };
     struct Character arr[] = { {
-  .characterID = 1,
-  .socialClass = MERCHANT,
-  .profession = "inn-keeper",
-  .name = "Edgar Crawford",
-  .inventorySize = 1,
+  .characterID = 1, //64bit
+  .socialClass = MERCHANT, //8bit
+  .profession = "inn-keeper", //DEFAULT_BUFFER_SIZE = 512
+  .name = "Edgar Crawford", //DEFAULT_BUFFER_SIZE = 512
+  .inventorySize = 1, //64bit
   .inventory = {
-    { .itemID = 200648657395984580,
-      .quantity = 1
+    { .itemID = 200648657395984580, //64bit
+      .quantity = 1 //64bit
     }
   }
 } };
@@ -658,13 +659,20 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
   assert(res == 0);
   printf("b\n");
 
-  const size_t Aexpected_size = sizeof(uint64_t) + sizeof(arr[0]);
+  for (char i = 0; i < Afile_size; i++){
+    printf("%c", Afile_conts[i]);
+  }
 
+  FIXME: file size bad
+  const size_t Aexpected_size = sizeof(uint64_t) + sizeof(arr[0]);
 
   //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
   printf("Afilesize: %ld\n", Afile_size);
   printf("AExpectedfilesize: %ld\n", Aexpected_size);
   assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
+
+
+  //CAN I PRINT OUT FILE_CONTS???
 printf("c\n");
    // metadata should be `1`
   size_t Aactual_read_metadata = 0;
