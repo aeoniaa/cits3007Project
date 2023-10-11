@@ -87,7 +87,6 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
 //   //the same as saveItemDetails but uses filename parameter.
 //   //not required to implement, but may be useful for testing
 //     FILE *ofp = fopen(filename, "wb");
-
 //   if (ofp == NULL) {
 //     perror("Error opening file");
 //     exit(EXIT_FAILURE);
@@ -340,7 +339,7 @@ for (size_t i = 0; i < nmemb; i++) {
     charStructSize += arr[i].inventorySize * (sizeof(uint64_t) * 2);
     sizeOfArr += charStructSize;
     printf("Item %zu:\n", i + 1);
-    printf("\tCharacter ID: %lu\n", arr[i].characterID);
+    printf("\tCharacter ID: %ld\n", arr[i].characterID);
     printf("\tSocialClass: %d\n", arr[i].socialClass);
     printf("\tProfession: %s\n", arr[i].profession);
     printf("\tName: %s\n", arr[i].name);
@@ -529,87 +528,78 @@ int main(int argc, char *argv[]){
   // const char * infile_path = "test-data/items001.dat";
   // int item001fd = open_with_fileno(infile_path);
   // printf("opened file\n");
-
-
+  //
+  //
   // size_t numItems = 0;
   // struct ItemDetails * itemsArr = NULL;
   // int res = loadItemDetails(&itemsArr, &numItems, item001fd);
-
+  //
   // printf("res of loadItemDetails: %d\n", res);
   // printf("numItems (modified by loadItemDetails() ): %ld\n", numItems);
 
-  
-//from chatgpt loadItemDetails
+//my loadItemDetails
     // // Sample usage of loadItemDetails
     // int fd = open("your_file.dat", O_RDONLY); // Open the file for reading
     // if (fd == -1) {
     //     perror("Failed to open the file");
     //     return 1;
     // }
-
     // struct ItemDetails* loadedItems = NULL;
     // size_t numItems = 0;
-
+    // 
     // if (loadItemDetails(&loadedItems, &numItems, fd) != 0) {
     //     fprintf(stderr, "Error: Failed to load item details\n");
     //     return 1;
     // }
-
+    // if (loadItemDetails(&loadedItems, &numItems,
     // // Now you have the loadedItems array with numItems elements
-
+    //
     // // Remember to free the allocated memory when you're done with it
     // free(loadedItems);
-
+    //
     // return 0;
 
 
-
-
-//SAVE ITEM DETAILS CHECKS
+  //SAVE ITEM DETAILS CHECKS
   struct ItemDetails itemArr[] = {
-    { .itemID = 16602759796824695000UL, .name = "telescope",      .desc = "brass with wooden tripod, 25x30x60 in." }
-  };
-  size_t itemArr_size = sizeof(itemArr)/sizeof(struct ItemDetails);
+      { .itemID = 16602759796824695000UL, .name = "telescope",      .desc = "brass with wooden tripod, 25x30x60 in." }
+    };
+    size_t itemArr_size = sizeof(itemArr)/sizeof(struct ItemDetails);
 
-  char* file_conts = NULL;
-  size_t file_size = 0;
+    char* file_conts = NULL;
+    size_t file_size = 0;
 
-  FILE *ofp = fopen("tmp.dat", "wb");
-  assert(ofp != NULL);
-  int saveItemfd = fileno(ofp);
-  assert(saveItemfd != -1);
+    FILE *ofp = fopen("tmp.dat", "wb");
+    assert(ofp != NULL);
+    int saveItemfd = fileno(ofp);
+    assert(saveItemfd != -1);
 
-  int res = saveItemDetails(itemArr, itemArr_size, saveItemfd);
-  assert(res == 0);
-  fclose(ofp);
+    int res = saveItemDetails(itemArr, itemArr_size, saveItemfd);
+    assert(res == 0);
+    fclose(ofp);
 
-  res = slurp_file("tmp.dat", "rb", &file_conts, &file_size);
-  assert(res == 0);
+    res = slurp_file("tmp.dat", "rb", &file_conts, &file_size);
+    assert(res == 0);
 
-  const size_t expected_size = sizeof(uint64_t) + sizeof(struct ItemDetails);
+    const size_t expected_size = sizeof(uint64_t) + sizeof(struct ItemDetails);
 
-  //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
-  assert(file_size == expected_size); //"size of written file should eq expected size"
+    //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
+    assert(file_size == expected_size); //"size of written file should eq expected size"
 
-   // metadata should be `1`
-  size_t actual_read_metadata = 0;
-  memcpy(&actual_read_metadata, file_conts, sizeof(size_t));
-  assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected");
+    // metadata should be `1`
+    size_t actual_read_metadata = 0;
+    memcpy(&actual_read_metadata, file_conts, sizeof(size_t));
+    assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected");
 
-   // following the metadata should be our struct
-  struct ItemDetails actual_read_item = { 0 };
-  memcpy(&actual_read_item, file_conts + sizeof(size_t), sizeof(struct ItemDetails));
-  assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected"
+    // following the metadata should be our struct
+    struct ItemDetails actual_read_item = { 0 };
+    memcpy(&actual_read_item, file_conts + sizeof(size_t), sizeof(struct ItemDetails));
+    assert(actual_read_metadata == itemArr_size); //"size of written metadata should be as expected"
 
-  assert_itemDetails_are_equal(&actual_read_item, &(itemArr[0]));
+    assert_itemDetails_are_equal(&actual_read_item, &(itemArr[0]));
 
-  if (file_conts != NULL)
-    free(file_conts);
-
-
-
-
-
+    if (file_conts != NULL)
+      free(file_conts);
 
 
 
@@ -659,9 +649,6 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
   assert(res == 0);
   printf("b\n");
 
-  for (size_t i = 0; i < Afile_size; i++){
-    printf("%c", Afile_conts[i]);
-  }
 
   //FIXME: file size bad
   const size_t Aexpected_size = sizeof(uint64_t) + sizeof(arr[0]);
