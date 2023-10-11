@@ -599,6 +599,8 @@ int main(int argc, char *argv[]){
 
     size_t nmembSAVECHAR = sizeof(arr) / sizeof(arr[0]);
 
+    printf("save characters %ld\n", nmembSAVECHAR);
+
     // Call saveCharacters with the array pointer
     if (saveCharacters(arr, nmembSAVECHAR, fileno(stdout)) != 0) {
         fprintf(stderr, "Error: Failed to save characters\n");
