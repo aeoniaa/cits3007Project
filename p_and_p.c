@@ -474,10 +474,9 @@ int main(int argc, char *argv[]){
   printf("hello world\n");
 
 //from check.ts loadItemDetails
-  const char * infile_path = "test-data/items001.dat";
+  const char * infile_path = "test-data/items002.dat";
   int item001fd = open_with_fileno(infile_path);
   printf("opened file\n");
-  
   
   size_t numItems = 0;
   struct ItemDetails * loaditemsArr = NULL;
