@@ -388,42 +388,37 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
 /**
  * @brief Loads the game after checking user holds correct permissions to load the ItemDetails database.
  *  
- * Function attempts to acquire appropriate permissions for opening the ItemDetails database (that is: the effective userID is set
- * to the userID of pitchpoltadmin). Opens the database to a file descriptor, drops permissions, then loads the database from the specified file, call the function
- * playGame using the loaded data and the number of items in the loaded data.
- * @param filepath
+ * The function checks the running process's permissions to ensure the executable it was launched from was a setUID executable owned by user @c pitchpoltadmin.
+ * It attempts to acquire appropriate permissions for opening the ItemDetails database, by setting the effective userID is to the userID of pitchpoltadmin.
+ * It opens the @c ItemDetails database to a file descriptor, drops permissions, then loads the database from the specified file and calls the function
+ * playGame() using the loaded data and the number of items in the loaded data.
+ * @param filepath The file path of the @c ItemDetails database file
  * @return 1 if an error occurs during deserialization, 2 if an error occurs while aquiring or dropping permissions, or 0 otherwise.
-=*/
+ * @note This function assumes it is called after the executable has temporarily dropped privileges
+ * @note This function assumes the ruid, rgid, euid and egid have dropped privilege, and the privileged uid and gid of @c pitchpoltadmin are saved in suid and sgid respectively.
+ */
 //FIXME: DO THIS!!!
 int secureLoad(const char *filepath) {
-  //TODO: Check program running as setuid owned by pitchpoltadmin
-  //  //0. check the running process’s permissions to ensure that the executable it was launched from was a setUID executable owned by user pitchpoltadmin
-
   struct passwd *user_info = getpwuid(geteuid());
   if (user_info == NULL || strcmp(user_info->pw_name, "pitchpoltadmin") != 0) {
     return 2; // Not running as setuid owned by pitchpoltadmin
   }
 
-
-  //  //leave suid, thats how we go back to same privs,   //change euid
-  //1. aquire perms to open ItemDetails db (effectice userid set to userid of pitchpoltadmin. --> temp higher priv
-  //      error return 2
-
-  //TODO: SET Euid to uid of pitchpoltadmin
-  struct group *group_info = getgrnam("pitchpoltadmin");
-  if (group_info == NULL) {
-    return 2; // Group does not exist
+  uid_t ruid, euid, suid;
+  if(getresuid(&ruid, &euid, &suid) != 0){
+    return 2;
+  }
+  if(setresuid(-1, suid, euid) != 0) {
+    return 2;
   }
 
-  if (setregid(group_info->gr_gid, group_info->gr_gid) != 0) {
-    return 2; // Error switching to the target group
+  gid_t rgid, egid, sgid;
+  if(getresgid(&rgid, &egid, &sgid) != 0){
+    return 2;
   }
-
-  if (setreuid(user_info->pw_uid, user_info->pw_uid) != 0) {
+  if(setresgid(-1, sgid, egid) != 0) {
     return 2; // Error switching to the target user
   }
-
-
 
   int fd = open(filepath, O_RDONLY);
   if (fd == -1) {
@@ -431,9 +426,19 @@ int secureLoad(const char *filepath) {
     return 1;
   }    
 
-  //TODO: PERM DROP PRIVILEGES HERE
-  //fail to drop, return 2'
+  if (setgid(getgid()) != 0) {
+    return 2; 
+  }
+  if (setregid(-1, 0) == 0) {
+    return 2;
+  }
 
+  if (setuid(getuid()) != 0) {
+    return 2; 
+  }
+  if (setreuid(-1, 0) == 0) {
+    return 2;
+  }
 
   size_t nmemb = 0;
   struct ItemDetails * loadedItems = NULL;
@@ -448,19 +453,6 @@ int secureLoad(const char *filepath) {
   playGame(loadedItems, nmemb);
   free(loadedItems);
   return 0;
-  /**
-  5.2 of the paper link - use the easy, powerful one?
-  The specification doesn't say whether the pitchpoltadmin account userID is zero, 
-  so you'll have to make a reasonable assumption about this (which you should document in your submitted code). 
-  Given what has been discussed in lectures and labs, would zero be a sensible choice for the pitchpoltadmin account?
-  */
-  //10 marks --> look at project spec!!!!!!
-
-
-  
-
-
-
 }
 
 //TODO: RESET  BEFORE SUBMITTING: void playGame(struct ItemDetails* ptr, size_t nmemb);
