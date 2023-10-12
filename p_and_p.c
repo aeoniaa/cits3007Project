@@ -335,12 +335,11 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
       return 1;
     }
 
-    struct ItemCarried inventoryToWrite[arr[i].inventorySize] = {};
+    struct ItemCarried inventoryToWrite[arr[i].inventorySize];
+    inventoryToWrite = [];
         for (j = 0; j < arr[i].inventorySize; j++) {
           inventoryToWrite[j] = arr[i].inventory[j];
         }
-
-
     if (fwrite(&inventoryToWrite, sizeof(inventoryToWrite), 1, fp) != 1) {
       fclose(fp);
       return 1;
