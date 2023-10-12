@@ -1,15 +1,11 @@
-//TODO: remove prints before submitting
-//TODO: no use of strcpy or strlen as they read past the buffer size DEFAULT_BUFFER_SIZE-1
-//could use <read> func from <unistd.h> to read struct from file using fd ssize_tread(intfd, void*buf, size_tcount); -->   structMyStructmyStruct; ssize_tres = read(fd, &myStruct, sizeof(structMyStruct));
-//fp to fd --> fdopen and fileno
-
 /**
  * @file p_and_p.c
  * @author Brigitte Gredziuk 23460936
  * @date 2023
  * @brief File containing functions for CITS3007 Secure Coding Project.
  * 
- * Contains functions for saveItemDetails, loadItemDetails, saveCharacter, loadCharacter, 
+ * p_and_p.c contains functions for saveItemDetails, loadItemDetails to serialize and deserialize ItemDetails structs to files,
+ * saveCharacter, loadCharacter functions to serialize and deserialize Character structs to files
  * and validation functions for what defines a 'name', 'multiword', and the structs ItemDetails and Character.
  */
 
@@ -61,7 +57,6 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
     int res = isValidItemDetails(&arr[i]);
     if (res != 1) {
       fclose(fp);
-      //printf("Error: invlaid item details detected");
       return 1;
     }
   }
@@ -111,14 +106,12 @@ int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
       return 1;
   }
 
-  // Allocate memory for the records
   *ptr = (struct ItemDetails*)malloc(sizeof(struct ItemDetails) * (*nmemb));
   if (*ptr == NULL) {
     free(*ptr);
     return 1;
   }
 
-  //TODO: possibly need to fseek here to 64bits in.
   if (read(fd, *ptr, sizeof(struct ItemDetails) * (*nmemb)) != sizeof(struct ItemDetails) * (*nmemb)) {
     free(*ptr); 
     return 1;
@@ -319,22 +312,20 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   //       return 1;
   //   }
   // }
-      if (fwrite(&arr[i], sizeof(struct Character), 1, fp) != 1) {
-        fclose(fp);
-        return 1;
+    if (fwrite(&arr[i], sizeof(struct Character), 1, fp) != 1) {
+      fclose(fp);
+      return 1;
     }
 
-      // Write the associated ItemCarried data based on inventorySize
     if (fwrite(arr[i].inventory, sizeof(struct ItemCarried)*arr[i].inventorySize, arr[i].inventorySize, fp) != arr[i].inventorySize) {
-        fclose(fp);
-        return 1;
+      fclose(fp);
+      return 1;
     }
   }
 
   fflush(fp);
   fclose(fp);
   return 0;
-
 }
 
 /**
@@ -354,22 +345,18 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 //FIXME: This function
 int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
   if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
-      perror("Failed to read the header");
-      return 1;
+    return 1;
   }
 
   //FIXME: Does not allow for variable size of character struct
   *ptr = (struct Character*)malloc(sizeof(struct Character) * (*nmemb));
-  
   if (*ptr == NULL) {
-      perror("Memory allocation failed");
-      return 1;
+    return 1;
   }
 
   // Read the characters from the file and store them in the allocated memory
   if (read(fd, *ptr, sizeof(struct Character) * (*nmemb)) != sizeof(struct Character) * (*nmemb)) {
-      perror("Failed to read character details");
-      free(*ptr); // Free the allocated memory in case of an error
+      free(*ptr); 
       return 1;
   }
 
@@ -392,7 +379,7 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
 int secureLoad(const char *filepath) {
   struct passwd *user_info = getpwuid(geteuid());
   if (user_info == NULL || strcmp(user_info->pw_name, "pitchpoltadmin") != 0) {
-    return 2; // Not running as setuid owned by pitchpoltadmin
+    return 2; 
   }
 
   uid_t ruid, euid, suid;
@@ -408,7 +395,7 @@ int secureLoad(const char *filepath) {
     return 2;
   }
   if(setresgid(-1, sgid, egid) != 0) {
-    return 2; // Error switching to the target user
+    return 2;
   }
 
   int fd = open(filepath, O_RDONLY);
@@ -450,6 +437,10 @@ int secureLoad(const char *filepath) {
 void playGame(struct ItemDetails* ptr, size_t nmemb){
   printf("playGame done\n");
 }
+
+
+
+
 
 //TODO: DELETE THESE FUNCTIONS: THEY WERE FOR CHECKING
 
@@ -538,6 +529,7 @@ int slurp_file(
 
 //AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH USE PROVIDED CHARACTER TEST FILES FOR TESTING LOAD CHARACTER
 //TODO: REMOVE BEFORE SUBMITTING
+//TODO: remove prints before submitting
 int main(int argc, char *argv[]){
   printf("hello world\n");
 
