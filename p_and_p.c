@@ -49,9 +49,9 @@
  * @note It is up to the caller to ensure the number of ItemDetails structs in @p arr is reflected in @p nmemb, otherwise this function is not guaranteed to work accurately.
 */
 int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
-  if (nmemb !> -1) {
+  if (!(nmemb > -1)) {
     return 1;
-  } 
+  }  
 
   FILE *fp;
 
@@ -111,7 +111,7 @@ int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const cha
  * @note The memory allocated to @p ptr in this function is to be freed by the caller.
 */
 int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
-  if (nmemb !> -1) {
+  if (!(nmemb > -1)) {
     return 1;
   } 
 
@@ -298,7 +298,7 @@ int isValidCharacter(const struct Character * c) {
 */
 //FIXME:SEGMENTATION　FAULT
 int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
-  if (nmemb !> -1) {
+  if (!(nmemb > -1)) {
     return 1;
   } 
 
@@ -365,7 +365,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 */
 //FIXME: This function
 int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
-  if (nmemb !> -1) {
+  if (!(nmemb > -1)) {
     return 1;
   } 
 
