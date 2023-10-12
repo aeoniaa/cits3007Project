@@ -314,7 +314,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   //CAUSES STACK BUFFER OVERFLOW
   printf("sizeOfCharStruct: %ld\n", sizeof(struct Character));
   printf("sizeOfItemStruct: %ld\n", sizeof(struct ItemCarried));
-  printf("sizeOfIventory: %ld\n", sizeof(struct ItemCarried)*arr[i].inventorySize);
+  printf("sizeOfInventory: %ld\n", sizeof(struct ItemCarried)*arr[i].inventorySize);
     if (fwrite(&arr[i], sizeof(struct Character) + (sizeof(struct ItemCarried)*arr[i].inventorySize), 1, fp) != 1) {
       fclose(fp);
       return 1;
@@ -597,28 +597,32 @@ int main(int argc, char *argv[]){
 
 //   //SAVECHARACTER
 
-    // struct Character arr[] = {
-    //     {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
-    //     {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
-    //     // Add more characters as needed
-    // };
-    struct Character arr[] = { {
-  .characterID = 1, //64bit
-  .socialClass = MERCHANT, //8bit
-  .profession = "inn-keeper", //DEFAULT_BUFFER_SIZE = 512
-  .name = "Edgar Crawford", //DEFAULT_BUFFER_SIZE = 512
-//  .inventorySize = 0, //64bit
-//   .inventory = NULL
-// } };
+    struct Character arr[] = {
+        {1, MENDICANT, "Profession 1", "Character 1", 2, {{1, 5}, {2, 10}}},
+        {2, LABOURER, "Profession 2", "Character 2", 1, {{3, 3}}},
+        // Add more characters as needed
+    };
+//     struct Character arr[] = { {
+//   .characterID = 1, //64bit
+//   .socialClass = MERCHANT, //8bit
+//   .profession = "inn-keeper", //DEFAULT_BUFFER_SIZE = 512
+//   .name = "Edgar Crawford", //DEFAULT_BUFFER_SIZE = 512
+// //  .inventorySize = 0, //64bit
+// //   .inventory = NULL
+// // } };
 
-//FIXME: works with empty inventory
-.inventorySize = 1, //64bit
-  .inventory = {
-    { .itemID = 200648657395984580, //64bit
-      .quantity = 1 //64bit
-    }
-  }
-} };
+// //FIXME: works with empty inventory
+//   .inventorySize = 1, //64bit
+//     .inventory = {
+//       { .itemID = 200648657395984580, //64bit
+//         .quantity = 1 //64bit
+//       }
+//     }
+//   } 
+  
+// };
+  printf("size of character arr[0] = %ld\n", sizeof(arr[0]));
+  printf("size of character arr[1] = %ld\n", sizeof(arr[1]));
 
     size_t nmembSAVECHAR = sizeof(arr) / sizeof(arr[0]);
 
@@ -649,7 +653,7 @@ if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
   const size_t Aexpected_size = sizeof(uint64_t) + sizeof(arr[0]);
 
   //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
-  printf("size of arr[] = %ld\n", sizeof(arr[0]));
+
   printf("Afilesize: %ld\n", Afile_size);
   printf("AExpectedfilesize: %ld\n", Aexpected_size);
   assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
