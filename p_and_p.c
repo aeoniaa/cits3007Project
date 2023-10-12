@@ -49,10 +49,6 @@
  * @note It is up to the caller to ensure the number of ItemDetails structs in @p arr is reflected in @p nmemb, otherwise this function is not guaranteed to work accurately.
 */
 int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
-  if (!(nmemb > -1)) {
-    return 1;
-  }  
-
   FILE *fp;
 
   fp = fdopen(fd, "w");
@@ -111,10 +107,6 @@ int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const cha
  * @note The memory allocated to @p ptr in this function is to be freed by the caller.
 */
 int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
-  if (!(nmemb > -1)) {
-    return 1;
-  } 
-
   if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
       return 1;
   }
@@ -298,10 +290,6 @@ int isValidCharacter(const struct Character * c) {
 */
 //FIXME:SEGMENTATION　FAULT
 int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
-  if (!(nmemb > -1)) {
-    return 1;
-  } 
-
   FILE *fp;
 
   fp = fdopen(fd, "wb"); 
@@ -365,10 +353,6 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 */
 //FIXME: This function
 int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
-  if (!(nmemb > -1)) {
-    return 1;
-  } 
-
   if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
       perror("Failed to read the header");
       return 1;
