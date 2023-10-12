@@ -314,6 +314,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
       fclose(fp);
       return 1;
     }
+  }
 
   //   if (fwrite(arr[i].inventory, , arr[i].inventorySize, fp) != arr[i].inventorySize) {
   //     fclose(fp);
