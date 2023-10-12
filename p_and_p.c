@@ -24,7 +24,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <pwd.h>
-
+#include <grp.h>
 #include <assert.h> //TODO: delete before submittion
 #include <check.h> //TODO: delete before submittion
 
