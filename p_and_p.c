@@ -302,8 +302,8 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     printf("a\n");
     if (res != 1) {
       fclose(fp);
-      return 1;
       printf("b\n");
+      return 1;
     }
 
   printf("3\n");
