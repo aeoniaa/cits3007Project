@@ -301,7 +301,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
       return 1;
     }
 
-  //FIXME: stack-buffer-overflow
+  //stack-buffer-overflow
   //   size_t sizeOfCharStruct = sizeof(struct Character); //1208, does not include ItemCarried size
   //   //printf("size of struct ItemCarried: %ld\n", sizeof(struct ItemCarried));
   //   sizeOfCharStruct += (sizeof(struct ItemCarried) * arr[i].inventorySize); //sizeof(struct ItemCarried) = 16
@@ -310,6 +310,11 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   //       return 1;
   //   }
   // }
+
+  //CAUSES STACK BUFFER OVERFLOW
+  printf("sizeOfCharStruct: %ld\n", sizeof(struct Character));
+  printf("sizeOfItemStruct: %ld\n", sizeof(struct ItemCarried));
+  printf("sizeOfIventory: %ld\n", sizeof(struct ItemCarried)*arr[i].inventorySize);
     if (fwrite(&arr[i], sizeof(struct Character) + (sizeof(struct ItemCarried)*arr[i].inventorySize), 1, fp) != 1) {
       fclose(fp);
       return 1;
