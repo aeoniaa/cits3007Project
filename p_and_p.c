@@ -49,6 +49,10 @@
  * @note It is up to the caller to ensure the number of ItemDetails structs in @p arr is reflected in @p nmemb, otherwise this function is not guaranteed to work accurately.
 */
 int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
+  if (nmemb !> -1) {
+    return 1;
+  } 
+
   FILE *fp;
 
   fp = fdopen(fd, "w");
@@ -107,32 +111,36 @@ int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const cha
  * @note The memory allocated to @p ptr in this function is to be freed by the caller.
 */
 int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
-    if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
-        return 1;
-    }
+  if (nmemb !> -1) {
+    return 1;
+  } 
 
-    // Allocate memory for the records
-    *ptr = (struct ItemDetails*)malloc(sizeof(struct ItemDetails) * (*nmemb));
-    if (*ptr == NULL) {
+  if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
+      return 1;
+  }
+
+  // Allocate memory for the records
+  *ptr = (struct ItemDetails*)malloc(sizeof(struct ItemDetails) * (*nmemb));
+  if (*ptr == NULL) {
+    free(*ptr);
+    return 1;
+  }
+
+  //TODO: possibly need to fseek here to 64bits in.
+  if (read(fd, *ptr, sizeof(struct ItemDetails) * (*nmemb)) != sizeof(struct ItemDetails) * (*nmemb)) {
+    free(*ptr); 
+    return 1;
+  }
+
+  for (size_t i = 0; i < *nmemb; i++) {
+    if (!isValidItemDetails(&(*ptr)[i])) {
       free(*ptr);
       return 1;
     }
+  }
 
-    //TODO: possibly need to fseek here to 64bits in.
-    if (read(fd, *ptr, sizeof(struct ItemDetails) * (*nmemb)) != sizeof(struct ItemDetails) * (*nmemb)) {
-      free(*ptr); 
-      return 1;
-    }
-
-    for (size_t i = 0; i < *nmemb; i++) {
-      if (!isValidItemDetails(&(*ptr)[i])) {
-        free(*ptr);
-        return 1;
-      }
-    }
-
-    fsync(fd);
-    return 0;
+  fsync(fd);
+  return 0;
 }
 
 /**
@@ -290,6 +298,10 @@ int isValidCharacter(const struct Character * c) {
 */
 //FIXME:SEGMENTATION　FAULT
 int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
+  if (nmemb !> -1) {
+    return 1;
+  } 
+
   FILE *fp;
 
   fp = fdopen(fd, "wb"); 
@@ -351,39 +363,35 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
  * @return 1 if error occurs during deserialization. On success, returns 0.
  * @note The memory allocated to @p ptr in this function is to be freed by the caller.
 */
-//FIXME: NO TESTS AVAILABLE
+//FIXME: This function
 int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
-    //Size of the Character array: A 64-bit, unsigned integer value indicating the number of Character structs stored in the file. This is the total number of characters to be loaded.    
-    // Read the number of characters (nmemb) from the file header
-    if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
-        perror("Failed to read the header");
-        return 1;
-    }
+  if (nmemb !> -1) {
+    return 1;
+  } 
 
-    //FIXME: PROBLEM:
-    // Allocate memory for the characters
-    *ptr = (struct Character*)malloc(sizeof(struct Character) * (*nmemb));
-    
-    // Allocate memory for the records
-    //*ptr = (struct ItemDetails*)malloc(sizeof(struct ItemDetails) * (*nmemb));
+  if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
+      perror("Failed to read the header");
+      return 1;
+  }
 
-    if (*ptr == NULL) {
-        perror("Memory allocation failed");
-        return 1;
-    }
+  //FIXME: Does not allow for variable size of character struct
+  *ptr = (struct Character*)malloc(sizeof(struct Character) * (*nmemb));
+  
+  if (*ptr == NULL) {
+      perror("Memory allocation failed");
+      return 1;
+  }
 
-    // Read the characters from the file and store them in the allocated memory
-    if (read(fd, *ptr, sizeof(struct Character) * (*nmemb)) != sizeof(struct Character) * (*nmemb)) {
-        perror("Failed to read character details");
-        free(*ptr); // Free the allocated memory in case of an error
-        return 1;
-    }
+  // Read the characters from the file and store them in the allocated memory
+  if (read(fd, *ptr, sizeof(struct Character) * (*nmemb)) != sizeof(struct Character) * (*nmemb)) {
+      perror("Failed to read character details");
+      free(*ptr); // Free the allocated memory in case of an error
+      return 1;
+  }
 
-    fsync(fd);
-    return 0;
+  fsync(fd);
+  return 0;
 }
-    //TODO: possibly need to fseek here to 64bits in.
-
 
 /**
  * @brief Loads the game after checking user holds correct permissions to load the ItemDetails database.
@@ -397,7 +405,6 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
  * @note This function assumes it is called after the executable has temporarily dropped privileges
  * @note This function assumes the ruid, rgid, euid and egid have dropped privilege, and the privileged uid and gid of @c pitchpoltadmin are saved in suid and sgid respectively.
  */
-//FIXME: DO THIS!!!
 int secureLoad(const char *filepath) {
   struct passwd *user_info = getpwuid(geteuid());
   if (user_info == NULL || strcmp(user_info->pw_name, "pitchpoltadmin") != 0) {
@@ -464,14 +471,14 @@ void playGame(struct ItemDetails* ptr, size_t nmemb){
 
 int open_with_fileno(const char * infile_path) {
   FILE *ifp = fopen(infile_path, "rb");
-  if (ifp == NULL)
-    printf(__FILE__, __LINE__, "couldn't open file");
+  //if (ifp == NULL)
+    //printf(__FILE__, __LINE__, "couldn't open file");
   
 
   int fd = fileno(ifp);
 
-  if (fd == -1)
-    printf(__FILE__, __LINE__, "couldn't get fd for file");
+  // if (fd == -1)
+  //   printf(__FILE__, __LINE__, "couldn't get fd for file");
 
   return fd;
 }
