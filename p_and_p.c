@@ -105,7 +105,8 @@ int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
       return 1;
   }
 
-  *ptr = (struct ItemDetails*)malloc(sizeof(struct ItemDetails) * (*nmemb));
+  //TODO: changedc to calloc
+  *ptr = (struct ItemDetails*)calloc(sizeof(struct ItemDetails) * (*nmemb));
   if (*ptr == NULL) {
     free(*ptr);
     return 1;
@@ -279,7 +280,6 @@ int isValidCharacter(const struct Character * c) {
  * @return 1 if error occurs during serialization. On success, returns 0.
  * @note It is up to the caller to ensure the number of Character structs in @p arr is reflected in @p nmemb, otherwise this function is not guaranteed to work accurately.
 */
-//FIXME:SEGMENTATION　FAULT
 int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   FILE *fp;
 
@@ -289,44 +289,18 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
       return 1;
   }
 
-  printf("1\n");
   if (fwrite(&nmemb, sizeof(nmemb), 1, fp) != 1) {
       fclose(fp);
       return 1;
   }
 
-  printf("2\n");
-
   for (size_t i = 0; i < nmemb; i++) { 
-    //TODO: add validation
     int res = isValidCharacter(&arr[i]);
     if (res != 1) {
       fclose(fp);
       return 1;
     }
 
-  //stack-buffer-overflow
-  //   size_t sizeOfCharStruct = sizeof(struct Character); //1208, does not include ItemCarried size
-  //   //printf("size of struct ItemCarried: %ld\n", sizeof(struct ItemCarried));
-  //   sizeOfCharStruct += (sizeof(struct ItemCarried) * arr[i].inventorySize); //sizeof(struct ItemCarried) = 16
-  //   if (fwrite(&arr[i], sizeOfCharStruct, 1, fp) != 1) {
-  //       fclose(fp);
-  //       return 1;
-  //   }
-  // }
-
-  //CAUSES STACK BUFFER OVERFLOW
-    printf("sizeOfCharStruct: %ld\n", sizeof(struct Character));
-    printf("sizeOfItemStruct: %ld\n", sizeof(struct ItemCarried));
-    printf("sizeOfInventory: %ld\n", sizeof(struct ItemCarried)*arr[i].inventorySize);
-  //   if (fwrite(&arr[i], sizeof(struct Character) + (sizeof(struct ItemCarried)*arr[i].inventorySize), 1, fp) != 1) {
-  //     fclose(fp);
-  //     return 1;
-  //   }
-  // }
-
-
-    //WRITE THE START OF EACH CHARACTER
     if (fwrite(&arr[i], (sizeof(struct Character) - (sizeof(struct ItemCarried)*MAX_ITEMS)), 1, fp) != 1) {
       fclose(fp);
       return 1;
@@ -340,12 +314,6 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
       fclose(fp);
       return 1;
     }
-
-  //   if (fwrite(arr[i].inventory, , arr[i].inventorySize, fp) != arr[i].inventorySize) {
-  //     fclose(fp);
-  //     return 1;
-  //   }
-  // }
   }
 
   fflush(fp);
@@ -367,22 +335,34 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
  * @return 1 if error occurs during deserialization. On success, returns 0.
  * @note The memory allocated to @p ptr in this function is to be freed by the caller.
 */
-//FIXME: This function
 int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
   if (read(fd, nmemb, sizeof(uint64_t)) != sizeof(uint64_t)) {
     return 1;
   }
 
-  //FIXME: Does not allow for variable size of character struct
-  *ptr = (struct Character*)malloc(sizeof(struct Character) * (*nmemb));
-  if (*ptr == NULL) {
-    return 1;
-  }
+ // struct Character* tmpCharacter;
+  size_t allocatedMemory = 0;
 
-  // Read the characters from the file and store them in the allocated memory
-  if (read(fd, *ptr, sizeof(struct Character) * (*nmemb)) != sizeof(struct Character) * (*nmemb)) {
-      free(*ptr); 
+  *ptr = (struct Character*)calloc(nmemb, sizeof(struct Character));
+
+  for (size_t i = 0; i < nmemb; i++) { 
+    if (read(fd, (*ptr+i), (sizeof(struct Character) - (sizeof(struct ItemCarried)*MAX_ITEMS))) != (sizeof(struct Character) - (sizeof(struct ItemCarried)*MAX_ITEMS))) {
       return 1;
+    }
+
+    if (read(fd, (*ptr+i), (sizeof(struct ItemCarried) * ((*ptr+i)->inventorySize))) != (sizeof(struct ItemCarried) * ((*ptr+i)->inventorySize))) {
+        return 1;
+    }
+
+      // //make to realloc ptr with og + (sizeof(struct Character) - (sizeof(struct ItemCarried)*(MAX_ITEMS-inventorySize)))
+      // *ptr = (struct Character*)realloc(*ptr, allocatedMemory + (sizeof(struct Character) - (sizeof(struct ItemCarried)*(MAX_ITEMS-tmpCharacter->inventorySize))));
+      // if (*ptr == NULL) {
+      //   return 1;
+      // }
+      // allocatedMemory += (sizeof(struct Character) - (sizeof(struct ItemCarried)*(MAX_ITEMS-tmpCharacter->inventorySize)));
+      // &*ptr += tmpCharacter;
+
+      //copy tmpCharacter to end to pointer
   }
 
   fsync(fd);
@@ -687,7 +667,7 @@ struct Character arr[] = { {
   //fprintf(stderr, "%s:%d: actual file_size = %zu\n", __FILE__, __LINE__, file_size);
 
   printf("Afilesize: %ld\n", Afile_size);
-  printf("AExpectedfilesize: %ld\n", Aexpected_size);
+  //printf("AExpectedfilesize: %ld\n", Aexpected_size);
   //assert(Afile_size == Aexpected_size); //"size of written file should eq expected size"
 
    // metadata should be `1`
