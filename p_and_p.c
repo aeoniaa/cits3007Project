@@ -339,12 +339,9 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
     return 1;
   }
 
- // struct Character* tmpCharacter;
-  //size_t allocatedMemory = 0;
-
   *ptr = (struct Character*)calloc(nmemb, sizeof(struct Character));
 
-  for (size_t i = 0; i < nmemb; i++) { 
+  for (size_t i = 0; i < &nmemb; i++) { 
     if (read(fd, (*ptr+i), (sizeof(struct Character) - (sizeof(struct ItemCarried)*MAX_ITEMS))) != (sizeof(struct Character) - (sizeof(struct ItemCarried)*MAX_ITEMS))) {
       return 1;
     }
@@ -352,16 +349,6 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
     if (read(fd, (*ptr+i), (sizeof(struct ItemCarried) * ((*ptr+i)->inventorySize))) != (sizeof(struct ItemCarried) * ((*ptr+i)->inventorySize))) {
         return 1;
     }
-
-      // //make to realloc ptr with og + (sizeof(struct Character) - (sizeof(struct ItemCarried)*(MAX_ITEMS-inventorySize)))
-      // *ptr = (struct Character*)realloc(*ptr, allocatedMemory + (sizeof(struct Character) - (sizeof(struct ItemCarried)*(MAX_ITEMS-tmpCharacter->inventorySize))));
-      // if (*ptr == NULL) {
-      //   return 1;
-      // }
-      // allocatedMemory += (sizeof(struct Character) - (sizeof(struct ItemCarried)*(MAX_ITEMS-tmpCharacter->inventorySize)));
-      // &*ptr += tmpCharacter;
-
-      //copy tmpCharacter to end to pointer
   }
 
   fsync(fd);
