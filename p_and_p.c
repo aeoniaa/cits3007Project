@@ -672,19 +672,16 @@ struct Character arr[] = { {
   int saveCharfd = fileno(Aofp);
   assert(saveCharfd != -1);
 
-if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
+  if (saveCharacters(arr, nmembSAVECHAR, saveCharfd) != 0) {
         fprintf(stderr, "Error: Failed to save characters\n");
         return 1;
     }
-    printf("passed save character\n");
+  printf("passed save character\n");
 
   fclose(Aofp);
 
-  printf("a\n");
-
   res = slurp_file("tmp.dat", "rb", &Afile_conts, &Afile_size);
   assert(res == 0);
-  printf("b\n");
 
 
   //FIXME: file size bad
