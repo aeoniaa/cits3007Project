@@ -105,8 +105,7 @@ int loadItemDetails(struct ItemDetails** ptr, size_t* nmemb, int fd) {
       return 1;
   }
 
-  //TODO: changedc to calloc
-  *ptr = (struct ItemDetails*)calloc(sizeof(struct ItemDetails) * (*nmemb));
+  *ptr = (struct ItemDetails*)malloc(sizeof(struct ItemDetails) * (*nmemb));
   if (*ptr == NULL) {
     free(*ptr);
     return 1;
@@ -341,7 +340,7 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
   }
 
  // struct Character* tmpCharacter;
-  size_t allocatedMemory = 0;
+  //size_t allocatedMemory = 0;
 
   *ptr = (struct Character*)calloc(&nmemb, sizeof(struct Character));
 
