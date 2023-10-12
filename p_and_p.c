@@ -289,11 +289,14 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
       return 1;
   }
 
+  printf("1\n");
   if (fwrite(&nmemb, sizeof(nmemb), 1, fp) != 1) {
       fclose(fp);
       return 1;
   }
 
+  printf("2\n");
+  
   for (size_t i = 0; i < nmemb; i++) { 
     int res = isValidCharacter(&arr[i]);
     if (res != 1) {
@@ -301,6 +304,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
       return 1;
     }
 
+  printf("3\n");
   //stack-buffer-overflow
   //   size_t sizeOfCharStruct = sizeof(struct Character); //1208, does not include ItemCarried size
   //   //printf("size of struct ItemCarried: %ld\n", sizeof(struct ItemCarried));
