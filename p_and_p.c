@@ -343,9 +343,9 @@ int loadCharacters(struct Character** ptr, size_t* nmemb, int fd) {
  // struct Character* tmpCharacter;
   size_t allocatedMemory = 0;
 
-  *ptr = (struct Character*)calloc(nmemb, sizeof(struct Character));
+  *ptr = (struct Character*)calloc(&nmemb, sizeof(struct Character));
 
-  for (size_t i = 0; i < nmemb; i++) { 
+  for (size_t i = 0; i < &nmemb; i++) { 
     if (read(fd, (*ptr+i), (sizeof(struct Character) - (sizeof(struct ItemCarried)*MAX_ITEMS))) != (sizeof(struct Character) - (sizeof(struct ItemCarried)*MAX_ITEMS))) {
       return 1;
     }
