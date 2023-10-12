@@ -327,7 +327,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
 
 
     //WRITE THE START OF EACH CHARACTER
-    if (fwrite(&arr[i], (sizeof(struct Character) - sizeof(struct ItemCarried inventory[MAX_ITEMS])), 1, fp) != 1) {
+    if (fwrite(&arr[i], (sizeof(struct Character) - sizeof(struct Character.inventory)), 1, fp) != 1) {
       fclose(fp);
       return 1;
     }
