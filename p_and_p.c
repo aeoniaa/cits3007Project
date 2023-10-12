@@ -84,7 +84,6 @@ int saveItemDetails(const struct ItemDetails* arr, size_t nmemb, int fd) {
   return 0;
   }
 
-
 int saveItemDetailsToPath(const struct ItemDetails* arr, size_t nmemb, const char* filename);
 
 /**
@@ -266,7 +265,6 @@ int isValidCharacter(const struct Character * c) {
   return 1;
 }
 
-
 /**
  * @brief Serializes an array of @c Character structs
  * 
@@ -312,16 +310,16 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   //       return 1;
   //   }
   // }
-    if (fwrite(&arr[i], sizeof(struct Character), 1, fp) != 1) {
+    if (fwrite(&arr[i], sizeof(struct Character) + (sizeof(struct ItemCarried)*arr[i].inventorySize), 1, fp) != 1) {
       fclose(fp);
       return 1;
     }
 
-    if (fwrite(arr[i].inventory, sizeof(struct ItemCarried)*arr[i].inventorySize, arr[i].inventorySize, fp) != arr[i].inventorySize) {
-      fclose(fp);
-      return 1;
-    }
-  }
+  //   if (fwrite(arr[i].inventory, , arr[i].inventorySize, fp) != arr[i].inventorySize) {
+  //     fclose(fp);
+  //     return 1;
+  //   }
+  // }
 
   fflush(fp);
   fclose(fp);
