@@ -432,7 +432,6 @@ void playGame(struct ItemDetails* ptr, size_t nmemb){
 
 
 
-
 //TODO: DELETE THESE FUNCTIONS: THEY WERE FOR CHECKING
 
 int open_with_fileno(const char * infile_path) {
