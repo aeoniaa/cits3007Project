@@ -298,6 +298,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   printf("2\n");
 
   for (size_t i = 0; i < nmemb; i++) { 
+    //TODO: add validation
     // int res = isValidCharacter(&arr[i]);
     // printf("a\n");
     // if (res != 1) {
@@ -306,7 +307,7 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
     //   return 1;
     // }
 
-  printf("3\n");
+    printf("3\n");
   //stack-buffer-overflow
   //   size_t sizeOfCharStruct = sizeof(struct Character); //1208, does not include ItemCarried size
   //   //printf("size of struct ItemCarried: %ld\n", sizeof(struct ItemCarried));
@@ -318,9 +319,9 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   // }
 
   //CAUSES STACK BUFFER OVERFLOW
-  printf("sizeOfCharStruct: %ld\n", sizeof(struct Character));
-  printf("sizeOfItemStruct: %ld\n", sizeof(struct ItemCarried));
-  printf("sizeOfInventory: %ld\n", sizeof(struct ItemCarried)*arr[i].inventorySize);
+    printf("sizeOfCharStruct: %ld\n", sizeof(struct Character));
+    printf("sizeOfItemStruct: %ld\n", sizeof(struct ItemCarried));
+    printf("sizeOfInventory: %ld\n", sizeof(struct ItemCarried)*arr[i].inventorySize);
   //   if (fwrite(&arr[i], sizeof(struct Character) + (sizeof(struct ItemCarried)*arr[i].inventorySize), 1, fp) != 1) {
   //     fclose(fp);
   //     return 1;
@@ -328,21 +329,29 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   // }
 
 
+    //WRITE THE START OF EACH CHARACTER
     if (fwrite(&arr[i], (sizeof(struct Character) - sizeof(arr[i].inventory)), 1, fp) != 1) {
       fclose(fp);
       return 1;
     }
-    if (fwrite(&arr[i].inventory, sizeof(struct ItemDetails)*nmemb, 1, fp) != 1) {
+
+    struct ItemCarried inventoryToWrite[arr[i].inventorySize] = {};
+        for (j = 0; j < arr[i].inventorySize; j++) {
+          inventoryToWrite[j] = arr[i].inventory[j];
+        }
+
+
+    if (fwrite(&inventoryToWrite, sizeof(inventoryToWrite), 1, fp) != 1) {
       fclose(fp);
       return 1;
     }
-  }
 
   //   if (fwrite(arr[i].inventory, , arr[i].inventorySize, fp) != arr[i].inventorySize) {
   //     fclose(fp);
   //     return 1;
   //   }
   // }
+  }
 
   fflush(fp);
   fclose(fp);
