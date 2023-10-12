@@ -298,13 +298,13 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   printf("2\n");
 
   for (size_t i = 0; i < nmemb; i++) { 
-    int res = isValidCharacter(&arr[i]);
-    printf("a\n");
-    if (res != 1) {
-      fclose(fp);
-      printf("b\n");
-      return 1;
-    }
+    // int res = isValidCharacter(&arr[i]);
+    // printf("a\n");
+    // if (res != 1) {
+    //   fclose(fp);
+    //   printf("b\n");
+    //   return 1;
+    // }
 
   printf("3\n");
   //stack-buffer-overflow
