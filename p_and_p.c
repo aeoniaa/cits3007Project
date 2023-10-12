@@ -322,15 +322,15 @@ int saveCharacters(struct Character *arr, size_t nmemb, int fd) {
   // }
 
 
-    if (fwrite(&arr[i], sizeof(struct Character) - sizeof(arr[i].inventory), 1, fp) != 1) {
+    if (fwrite(&arr[i], (sizeof(struct Character) - sizeof(arr[i].inventory)), 1, fp) != 1) {
       fclose(fp);
       return 1;
     }
-    if (fwrite(&arr[i] + sizeof(struct Character) - sizeof(arr[i].inventory), sizeof(struct ItemDetails)*nmemb, 1, fp) != 1) {
+    if (fwrite((&arr[i] + sizeof(struct Character) - sizeof(arr[i].inventory)), sizeof(struct ItemDetails)*nmemb, 1, fp) != 1) {
       fclose(fp);
       return 1;
     }
-  
+  }
 
   //   if (fwrite(arr[i].inventory, , arr[i].inventorySize, fp) != arr[i].inventorySize) {
   //     fclose(fp);
